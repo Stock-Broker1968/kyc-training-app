@@ -149,6 +149,11 @@
             box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
         }
 
+        .client-card:hover .client-avatar {
+            transform: scale(1.1);
+            transition: transform 0.3s ease;
+        }
+
         .client-card.active {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: var(--white);
@@ -177,6 +182,15 @@
             font-size: 1.5rem;
             color: var(--white);
             font-weight: bold;
+            overflow: hidden;
+            border: 3px solid var(--white);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .client-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .evaluation-panel {
@@ -191,6 +205,19 @@
             padding: 25px;
             border-radius: 15px;
             margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .client-detail::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1), transparent);
+            border-radius: 50%;
         }
 
         .client-detail h2 {
@@ -479,6 +506,28 @@
             to { transform: rotate(360deg); }
         }
 
+        .photo-loading {
+            animation: spin 1s linear infinite;
+            opacity: 0.5;
+        }
+
+        .client-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -498,7 +547,7 @@
     <div class="container">
         <div class="header">
             <h1>🛡️ KYC Training Pro - Evaluación de Riesgo AML</h1>
-            <p>Sistema Interactivo de Capacitación en Conocimiento del Cliente</p>
+            <p style="color: #6b7280; font-size: 1.1rem;">Sistema Interactivo de Capacitación en Conocimiento del Cliente</p>
             
             <div class="stats-bar">
                 <div class="stat-card">
@@ -557,6 +606,7 @@
             {
                 id: 1,
                 name: "Hans Müller",
+                photo: "https://i.pravatar.cc/300?img=33",
                 address: "Av. Reforma 123, CDMX",
                 nationality: "Alemana",
                 occupation: "Importador de maquinaria",
@@ -576,6 +626,7 @@
             {
                 id: 2,
                 name: "Juana Pérez Luna",
+                photo: "https://i.pravatar.cc/300?img=49",
                 address: "Calle Tulipanes 45, Toluca",
                 nationality: "Mexicana",
                 occupation: "Ama de casa",
@@ -595,6 +646,7 @@
             {
                 id: 3,
                 name: "Emilio Torres Hernández",
+                photo: "https://i.pravatar.cc/300?img=11",
                 address: "Paseo del Sol 98, Guadalajara",
                 nationality: "Mexicana",
                 occupation: "Influencer digital",
@@ -614,6 +666,7 @@
             {
                 id: 4,
                 name: "Pedro Hernández Juárez",
+                photo: "https://i.pravatar.cc/300?img=52",
                 address: "Camino Ejidal s/n, Oaxaca",
                 nationality: "Mexicana",
                 occupation: "Agricultor",
@@ -633,6 +686,7 @@
             {
                 id: 5,
                 name: "Mónica Gómez García",
+                photo: "https://i.pravatar.cc/300?img=32",
                 address: "Av. Patriotismo 750, CDMX",
                 nationality: "Mexicana",
                 occupation: "Abogada corporativa",
@@ -652,6 +706,7 @@
             {
                 id: 6,
                 name: "Luis Ramos Corona",
+                photo: "https://i.pravatar.cc/300?img=60",
                 address: "Calle Comercio 12, Iztapalapa",
                 nationality: "Mexicana",
                 occupation: "Comerciante informal",
@@ -671,6 +726,7 @@
             {
                 id: 7,
                 name: "José Ríos Díaz",
+                photo: "https://i.pravatar.cc/300?img=13",
                 address: "Priv. Reforma 21, Morelia",
                 nationality: "Mexicana",
                 occupation: "Exfuncionario público",
@@ -690,6 +746,7 @@
             {
                 id: 8,
                 name: "Ana Robles Moreno",
+                photo: "https://i.pravatar.cc/300?img=44",
                 address: "Av. Salud 321, Monterrey",
                 nationality: "Mexicana",
                 occupation: "Médico especialista",
@@ -709,6 +766,7 @@
             {
                 id: 9,
                 name: "Yu Chen",
+                photo: "https://i.pravatar.cc/300?img=5",
                 address: "Residencial UNAM, CDMX",
                 nationality: "China",
                 occupation: "Estudiante",
@@ -728,6 +786,7 @@
             {
                 id: 10,
                 name: "Daniel Cruz González",
+                photo: "https://i.pravatar.cc/300?img=7",
                 address: "Calle Startups 404, Querétaro",
                 nationality: "Mexicana",
                 occupation: "Desarrollador Fintech",
@@ -747,6 +806,7 @@
             {
                 id: 11,
                 name: "Antonio Rivera Marín",
+                photo: "https://i.pravatar.cc/300?img=70",
                 address: "Madero 200, Mexicali",
                 nationality: "Mexicana",
                 occupation: "Pensionado",
@@ -766,6 +826,7 @@
             {
                 id: 12,
                 name: "Laura Méndez",
+                photo: "https://i.pravatar.cc/300?img=45",
                 address: "Guerrero 900, Monterrey",
                 nationality: "Mexicana",
                 occupation: "Modelo de TV",
@@ -831,7 +892,9 @@
 
                 card.innerHTML = `
                     <div class="client-info">
-                        <div class="client-avatar">${client.name.split(' ').map(n => n[0]).join('')}</div>
+                        <div class="client-avatar">
+                            <img src="${client.photo}" alt="${client.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='${client.name.split(' ').map(n => n[0]).join('')}'">
+                        </div>
                         <div>
                             <h3>${client.name}</h3>
                             <p style="color: #6b7280; font-size: 0.9rem;">${client.occupation}</p>
