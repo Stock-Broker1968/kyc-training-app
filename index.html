@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KYC Training Pro - Evaluación de Riesgo AML</title>
-    <script src="scorm_api.js"></script>
+    <title>KYC Training Pro - Sistema Completo de Evaluación</title>
     <style>
         * {
             margin: 0;
@@ -25,7 +24,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -35,13 +34,138 @@
             margin: 0 auto;
         }
 
+        /* Pantalla de Registro */
+        .registration-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+        }
+
+        .registration-card {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .registration-card h1 {
+            color: var(--dark);
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .registration-card p {
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-group input.error {
+            border-color: var(--danger);
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.875rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .checkbox-group {
+            margin: 25px 0;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+
+        /* Header mejorado */
         .header {
-            background: var(--white);
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.98));
             border-radius: 20px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             animation: slideDown 0.5s ease-out;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
         }
 
         @keyframes slideDown {
@@ -57,231 +181,189 @@
 
         .header h1 {
             color: var(--dark);
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-size: 2rem;
+            background: linear-gradient(135deg, #2d3436, #636e72);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--white);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            transform: translateY(0);
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .stat-card h3 {
-            font-size: 2rem;
-            margin-bottom: 5px;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 30px;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .client-selector {
-            background: var(--white);
+        /* Selector de ejercicio */
+        .exercise-selector {
+            background: white;
             border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-height: 80vh;
-            overflow-y: auto;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: center;
         }
 
-        .client-card {
-            background: var(--light);
+        .exercise-info {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
             padding: 20px;
             border-radius: 15px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 3px solid transparent;
-            position: relative;
-            overflow: hidden;
+            margin: 20px 0;
         }
 
-        .client-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
-            transition: width 0.5s ease;
+        .exercise-info h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
         }
 
-        .client-card:hover::before {
-            width: 100%;
-        }
-
-        .client-card:hover {
-            transform: translateX(10px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
-        }
-
-        .client-card:hover .client-avatar {
-            transform: scale(1.05);
-            transition: transform 0.3s ease;
-        }
-
-        .client-card.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: var(--white);
-            border-color: var(--secondary);
-        }
-
-        .client-card.completed {
-            border-color: var(--success);
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-        }
-
-        .client-info {
+        .cases-preview {
             display: flex;
-            align-items: center;
-            gap: 15px;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
         }
 
-        .client-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        .case-badge {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #e5e7eb, #d1d5db);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            color: var(--white);
             font-weight: bold;
-            overflow: hidden;
-            border: 3px solid var(--white);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            color: #6b7280;
         }
 
-        .client-avatar img {
-            width: 100%;
+        /* Progress bar del ejercicio */
+        .exercise-progress {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #9ca3af;
+            transition: all 0.3s ease;
+        }
+
+        .step-circle.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step-circle.completed {
+            background: var(--success);
+            color: white;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: #e5e7eb;
+            z-index: -1;
+        }
+
+        .progress-line-fill {
             height: 100%;
-            object-fit: cover;
+            background: var(--success);
+            transition: width 0.5s ease;
         }
 
-        .evaluation-panel {
-            background: var(--white);
+        /* Panel de evaluación */
+        .evaluation-container {
+            background: white;
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
         }
 
-        .client-detail {
-            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-            padding: 25px;
+        .client-header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
         }
 
-        .client-detail::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.1), transparent);
-            border-radius: 50%;
+        .client-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
         }
 
-        .client-detail h2 {
-            color: var(--dark);
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-
-        .detail-grid {
+        .client-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-top: 20px;
         }
 
-        .detail-item {
-            background: var(--white);
+        .detail-box {
+            background: rgba(255,255,255,0.1);
             padding: 15px;
             border-radius: 10px;
-            border-left: 4px solid var(--primary);
         }
 
-        .detail-item strong {
-            color: var(--dark);
+        .detail-box strong {
             display: block;
+            font-size: 0.875rem;
+            opacity: 0.8;
             margin-bottom: 5px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .risk-evaluation {
-            margin-top: 30px;
-        }
-
+        /* Risk evaluation sections */
         .risk-section {
             background: var(--light);
-            padding: 20px;
+            padding: 25px;
             border-radius: 15px;
             margin-bottom: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .risk-section.completed {
+            border-color: var(--success);
         }
 
         .risk-section h3 {
             color: var(--dark);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
         .risk-indicator {
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: var(--white);
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
         }
-
-        .risk-low { background: var(--success); }
-        .risk-medium { background: var(--warning); }
-        .risk-high { background: var(--danger); }
 
         .risk-options {
             display: grid;
@@ -291,13 +373,13 @@
         }
 
         .risk-option {
-            padding: 15px;
+            padding: 20px;
             border: 2px solid #e5e7eb;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            background: var(--white);
+            background: white;
         }
 
         .risk-option:hover {
@@ -311,12 +393,12 @@
         }
 
         .justification-area {
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .justification-area textarea {
             width: 100%;
-            min-height: 100px;
+            min-height: 120px;
             padding: 15px;
             border: 2px solid #e5e7eb;
             border-radius: 10px;
@@ -331,10 +413,13 @@
             border-color: var(--primary);
         }
 
-        .action-buttons {
+        /* Navigation buttons */
+        .navigation-buttons {
             display: flex;
-            gap: 15px;
+            justify-content: space-between;
             margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e5e7eb;
         }
 
         .btn {
@@ -351,10 +436,10 @@
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--white);
+            color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
         }
@@ -364,141 +449,222 @@
             color: var(--dark);
         }
 
-        .btn-secondary:hover {
+        .btn-secondary:hover:not(:disabled) {
             background: #e5e7eb;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
         }
 
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
         }
 
-        .modal-content {
-            background: var(--white);
-            padding: 40px;
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Results screen */
+        .results-container {
+            background: white;
             border-radius: 20px;
-            max-width: 600px;
-            width: 90%;
-            animation: scaleIn 0.3s ease;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease-out;
         }
 
-        @keyframes scaleIn {
+        @keyframes fadeIn {
             from {
-                transform: scale(0.8);
                 opacity: 0;
             }
             to {
-                transform: scale(1);
                 opacity: 1;
             }
         }
 
-        .modal-header {
+        .results-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
-        .score-display {
-            font-size: 4rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 20px 0;
-        }
-
-        .feedback-section {
-            background: var(--light);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-        }
-
-        .achievement {
-            display: inline-block;
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: var(--white);
-            padding: 10px 20px;
-            border-radius: 50px;
-            margin: 5px;
-            font-weight: 600;
-            animation: bounce 0.5s ease;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .progress-bar {
-            background: #e5e7eb;
-            height: 30px;
-            border-radius: 15px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--success), #34d399);
-            border-radius: 15px;
-            transition: width 1s ease;
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            margin: 0 auto 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--white);
-            font-weight: 600;
-        }
-
-        .tooltip {
             position: relative;
-            display: inline-block;
-            cursor: help;
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.3);
         }
 
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 250px;
-            background-color: var(--dark);
-            color: var(--white);
-            text-align: center;
-            border-radius: 10px;
-            padding: 10px;
+        .score-circle .score-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .score-circle .score-label {
             position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -125px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.9rem;
+            bottom: 50px;
+            font-size: 1rem;
+            color: white;
+            opacity: 0.9;
         }
 
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
+        .grade-badge {
+            display: inline-block;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 20px 0;
         }
 
+        .grade-a {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .grade-b {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .grade-c {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .grade-d {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        /* Detailed results */
+        .detailed-results {
+            margin-top: 40px;
+        }
+
+        .result-case {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .result-case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .result-case h3 {
+            color: var(--dark);
+            font-size: 1.2rem;
+        }
+
+        .result-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .result-score.perfect {
+            color: var(--success);
+        }
+
+        .result-score.good {
+            color: var(--primary);
+        }
+
+        .result-score.regular {
+            color: var(--warning);
+        }
+
+        .result-score.poor {
+            color: var(--danger);
+        }
+
+        .result-factors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .result-factor {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #e5e7eb;
+        }
+
+        .result-factor.correct {
+            border-left-color: var(--success);
+        }
+
+        .result-factor.incorrect {
+            border-left-color: var(--danger);
+        }
+
+        .justification-review {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .justification-review h4 {
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .justification-text {
+            color: #6b7280;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* Print styles */
+        .print-button {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .print-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(107, 114, 128, 0.3);
+        }
+
+        /* Action buttons for results */
+        .results-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        /* Loading state */
         .loading {
             display: inline-block;
             width: 20px;
             height: 20px;
             border: 3px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            border-top-color: var(--white);
+            border-top-color: white;
             animation: spin 1s ease-in-out infinite;
         }
 
@@ -506,1025 +672,1151 @@
             to { transform: rotate(360deg); }
         }
 
-        .photo-loading {
-            animation: spin 1s linear infinite;
-            opacity: 0.5;
+        /* Hidden class */
+        .hidden {
+            display: none !important;
         }
 
-        .client-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--success);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
+        /* Marketing data notice */
+        .data-notice {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.875rem;
+            color: #92400e;
+        }
+
+        /* Timer display */
+        .timer-display {
+            background: linear-gradient(135deg, #fef3c7, #fed7aa);
+            padding: 10px 20px;
+            border-radius: 10px;
             font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            color: #92400e;
+            display: inline-block;
         }
 
+        /* Certificate preview */
+        .certificate-preview {
+            background: white;
+            border: 3px solid var(--primary);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .certificate-preview::before {
+            content: '🏆';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            background: white;
+            padding: 0 20px;
+        }
+
+        .certificate-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .certificate-text {
+            font-size: 1.1rem;
+            color: var(--dark);
+            line-height: 1.8;
+        }
+
+        /* Responsive design */
         @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
+            .registration-card {
+                padding: 30px 20px;
             }
-            
+
             .header h1 {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
             }
-            
-            .stats-bar {
+
+            .risk-options {
                 grid-template-columns: 1fr;
+            }
+
+            .progress-steps {
+                flex-direction: column;
+            }
+
+            .results-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .header {
+                box-shadow: none;
+                border: 1px solid #e5e7eb;
+            }
+
+            .btn, .print-button {
+                display: none;
+            }
+
+            .results-container {
+                box-shadow: none;
+                padding: 20px;
+            }
+
+            .result-case {
+                break-inside: avoid;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🛡️ KYC Training Pro - Evaluación de Riesgo AML</h1>
-            <p style="color: #6b7280; font-size: 1.1rem;">Sistema Interactivo de Capacitación en Conocimiento del Cliente</p>
-            
-            <div class="stats-bar">
-                <div class="stat-card">
-                    <h3 id="score">0</h3>
-                    <p>Puntuación Total</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="completed">0/12</h3>
-                    <p>Casos Completados</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="accuracy">0%</h3>
-                    <p>Precisión</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="level">Novato</h3>
-                    <p>Nivel Actual</p>
+        <!-- Pantalla de Registro -->
+        <div id="registrationScreen" class="registration-screen">
+            <div class="registration-card">
+                <h1>🛡️ KYC Training Pro</h1>
+                <p>Sistema Profesional de Evaluación de Riesgo AML/CFT</p>
+                
+                <form id="registrationForm">
+                    <div class="form-group">
+                        <label for="userName">Nombre Completo *</label>
+                        <input type="text" id="userName" name="userName" required>
+                        <span class="error-message">Por favor ingresa tu nombre completo</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userEmail">Correo Electrónico *</label>
+                        <input type="email" id="userEmail" name="userEmail" required>
+                        <span class="error-message">Por favor ingresa un correo válido</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userPhone">Teléfono Celular *</label>
+                        <input type="tel" id="userPhone" name="userPhone" pattern="[0-9]{10}" required>
+                        <span class="error-message">Por favor ingresa un número de 10 dígitos</span>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" id="termsAccept" required>
+                            <span>Acepto que mis datos sean utilizados para fines educativos y recibir información sobre cursos de cumplimiento normativo</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Comenzar Evaluación
+                    </button>
+                </form>
+
+                <div class="data-notice">
+                    <strong>📊 Nota sobre privacidad:</strong> Tus datos serán utilizados únicamente para mejorar la experiencia educativa y enviarte información relevante sobre capacitación en PLD/FT.
                 </div>
             </div>
         </div>
 
-        <div class="main-content">
-            <div class="client-selector">
-                <h2>📋 Selecciona un Cliente</h2>
-                <div id="clientList"></div>
-            </div>
-
-            <div class="evaluation-panel">
-                <div id="evaluationContent">
-                    <div style="text-align: center; padding: 100px 20px; color: #6b7280;">
-                        <h2>👈 Selecciona un cliente para comenzar la evaluación</h2>
-                        <p style="margin-top: 20px;">Analiza cada perfil cuidadosamente y determina el nivel de riesgo AML/CFT</p>
+        <!-- Pantalla de Selección de Ejercicio -->
+        <div id="exerciseScreen" class="hidden">
+            <div class="header">
+                <div class="header-top">
+                    <h1>KYC Training Pro - Evaluación</h1>
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <div>
+                            <div id="userNameDisplay" style="font-weight: 600;"></div>
+                            <div id="userEmailDisplay" style="font-size: 0.875rem; color: #6b7280;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div id="resultModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">¡Evaluación Completada!</h2>
+            <div class="exercise-selector">
+                <h2>🎯 Ejercicio de Evaluación KYC</h2>
+                
+                <div class="exercise-info">
+                    <h3>Información del Ejercicio</h3>
+                    <p>Se te presentarán <strong>5 casos aleatorios</strong> para evaluar.</p>
+                    <p>Cada caso requiere análisis de 4 factores de riesgo más una evaluación final.</p>
+                    <p>Tiempo estimado: 20-30 minutos</p>
+                </div>
+
+                <div class="cases-preview" id="casesPreview">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+
+                <button class="btn btn-primary" onclick="startExercise()" style="margin-top: 30px; font-size: 1.2rem; padding: 20px 50px;">
+                    🚀 Iniciar Ejercicio
+                </button>
             </div>
-            <div class="score-display" id="modalScore">85</div>
-            <div class="feedback-section" id="feedback"></div>
-            <div id="achievements"></div>
-            <button class="btn btn-primary" onclick="closeModal()" style="width: 100%; margin-top: 20px;">
-                Continuar
-            </button>
+        </div>
+
+        <!-- Pantalla de Evaluación -->
+        <div id="evaluationScreen" class="hidden">
+            <div class="header">
+                <div class="header-top">
+                    <h1>Evaluación en Progreso</h1>
+                    <div class="timer-display" id="timerDisplay">
+                        ⏱️ Tiempo: 00:00
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise-progress">
+                <div class="progress-steps">
+                    <div class="progress-line">
+                        <div class="progress-line-fill" id="progressFill" style="width: 0%;"></div>
+                    </div>
+                    <!-- Los pasos se generarán dinámicamente -->
+                    <div id="progressSteps"></div>
+                </div>
+            </div>
+
+            <div class="evaluation-container">
+                <div id="evaluationContent">
+                    <!-- El contenido se cargará dinámicamente -->
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="previousCase()" id="prevBtn" disabled>
+                        ← Caso Anterior
+                    </button>
+                    <button class="btn btn-primary" onclick="nextCase()" id="nextBtn">
+                        Siguiente Caso →
+                    </button>
+                    <button class="btn btn-success hidden" onclick="finishExercise()" id="finishBtn">
+                        ✅ Finalizar Ejercicio
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Resultados -->
+        <div id="resultsScreen" class="hidden">
+            <div class="results-container">
+                <div class="results-header">
+                    <h1>📊 Resultados de tu Evaluación</h1>
+                    
+                    <div class="score-circle">
+                        <div class="score-value" id="finalScore">0</div>
+                        <div class="score-label">PUNTOS</div>
+                    </div>
+
+                    <div id="gradeBadge" class="grade-badge">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+
+                    <div id="certificatePreview" class="certificate-preview hidden">
+                        <h2 class="certificate-title">Certificado de Completación</h2>
+                        <p class="certificate-text">
+                            Se certifica que <strong id="certName"></strong><br>
+                            ha completado satisfactoriamente el<br>
+                            <strong>Ejercicio de Evaluación KYC</strong><br>
+                            con una calificación de <strong id="certScore"></strong> puntos<br>
+                            <small>Fecha: <span id="certDate"></span></small>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="detailed-results" id="detailedResults">
+                    <!-- Los resultados detallados se cargarán aquí -->
+                </div>
+
+                <div class="results-actions">
+                    <button class="print-button" onclick="printResults()">
+                        🖨️ Imprimir Resultados
+                    </button>
+                    <button class="btn btn-primary" onclick="repeatExercise()">
+                        🔄 Repetir Ejercicio
+                    </button>
+                    <button class="btn btn-secondary" onclick="newExercise()">
+                        📝 Nuevo Ejercicio
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Base de datos de clientes
-        const clients = [
+        // Base de datos de clientes (igual que antes, pero extendida)
+        const clientsDatabase = [
             {
                 id: 1,
                 name: "Hans Müller",
-                photo: "https://i.pravatar.cc/300?img=33",
-                address: "Av. Reforma 123, CDMX",
                 nationality: "Alemana",
                 occupation: "Importador de maquinaria",
-                transactionality: "Transferencia internacional de $500,000 USD desde Suiza, operaciones comerciales regulares",
-                volume: { amount: 500000, frequency: "mensual", cashHandling: "bajo" },
-                cashManagement: "Transferencias desde cuentas en Suiza",
-                fundsOrigin: "Pariente en Alemania, Exministro de Finanzas, listado como PEP",
-                pepRelatives: "Perfil complejo por conexiones políticas internacionales",
-                correctRisk: "high",
-                riskFactors: {
+                transactionality: "Transferencias internacionales de $500,000 USD desde Suiza",
+                volume: "$500,000 mensual",
+                cashHandling: "Bajo",
+                fundsOrigin: "Pariente PEP - Exministro de Finanzas",
+                pepStatus: "Conexiones PEP directas",
+                correctRisk: {
                     transactional: "high",
                     geographic: "high",
                     profile: "high",
-                    pep: "high"
-                }
+                    pep: "high",
+                    final: "high"
+                },
+                explanation: "Riesgo ALTO por transferencias desde paraíso fiscal y conexiones PEP directas."
             },
             {
                 id: 2,
                 name: "Juana Pérez Luna",
-                photo: "https://i.pravatar.cc/300?img=49",
-                address: "Calle Tulipanes 45, Toluca",
                 nationality: "Mexicana",
                 occupation: "Ama de casa",
-                transactionality: "Sin actividad económica registrada, operaciones menores por transferencias familiares",
-                volume: { amount: 10000, frequency: "mensual", cashHandling: "alto" },
-                cashManagement: "Transferencias familiares desde Estados Unidos",
-                fundsOrigin: "Esposa de un empresario que estuvo involucrado en un escándalo de corrupción",
-                pepRelatives: "Posible intento de ocultar origen de fondos",
-                correctRisk: "high",
-                riskFactors: {
+                transactionality: "Sin actividad económica registrada",
+                volume: "$10,000 mensual",
+                cashHandling: "Alto",
+                fundsOrigin: "Esposo involucrado en escándalo de corrupción",
+                pepStatus: "Posible ocultamiento de origen de fondos",
+                correctRisk: {
                     transactional: "medium",
                     geographic: "medium",
                     profile: "high",
-                    pep: "high"
-                }
+                    pep: "high",
+                    final: "high"
+                },
+                explanation: "Riesgo ALTO por incongruencia entre perfil y operaciones, conexiones con corrupción."
             },
             {
                 id: 3,
-                name: "Emilio Torres Hernández",
-                photo: "https://i.pravatar.cc/300?img=11",
-                address: "Paseo del Sol 98, Guadalajara",
+                name: "Emilio Torres",
                 nationality: "Mexicana",
                 occupation: "Influencer digital",
-                transactionality: "Recibe depósitos en efectivo por $50,000 mensuales, ingresos de plataformas digitales",
-                volume: { amount: 50000, frequency: "semanal", cashHandling: "alto" },
-                cashManagement: "Depósitos de seguidores, sin justificación clara de origen",
-                fundsOrigin: "Actividad de alto riesgo por no justificar origen de ingresos",
-                pepRelatives: "Sin parientes PEPs",
-                correctRisk: "high",
-                riskFactors: {
+                transactionality: "Depósitos en efectivo de $50,000 mensuales",
+                volume: "$50,000 semanal",
+                cashHandling: "Alto",
+                fundsOrigin: "Sin justificación clara del origen",
+                pepStatus: "Sin conexiones PEP",
+                correctRisk: {
                     transactional: "high",
                     geographic: "low",
                     profile: "high",
-                    pep: "low"
-                }
+                    pep: "low",
+                    final: "high"
+                },
+                explanation: "Riesgo ALTO por falta de justificación del origen de fondos en efectivo."
             },
             {
                 id: 4,
-                name: "Pedro Hernández Juárez",
-                photo: "https://i.pravatar.cc/300?img=52",
-                address: "Camino Ejidal s/n, Oaxaca",
+                name: "Pedro Hernández",
                 nationality: "Mexicana",
                 occupation: "Agricultor",
-                transactionality: "Solicita microcrédito para insumos, operaciones en efectivo debido a falta de acceso bancario",
-                volume: { amount: 5000, frequency: "mensual", cashHandling: "alto" },
-                cashManagement: "No posee RFC ni CURP, las transacciones se realizan en efectivo",
-                fundsOrigin: "Ingresos no son fácilmente verificables",
-                pepRelatives: "Sin parientes PEPs",
-                correctRisk: "medium",
-                riskFactors: {
+                transactionality: "Operaciones en efectivo por falta de acceso bancario",
+                volume: "$5,000 mensual",
+                cashHandling: "Alto",
+                fundsOrigin: "Ingresos agrícolas no verificables",
+                pepStatus: "Sin conexiones PEP",
+                correctRisk: {
                     transactional: "medium",
                     geographic: "low",
                     profile: "medium",
-                    pep: "low"
-                }
+                    pep: "low",
+                    final: "medium"
+                },
+                explanation: "Riesgo MEDIO justificado por contexto rural y falta de bancarización."
             },
             {
                 id: 5,
-                name: "Mónica Gómez García",
-                photo: "https://i.pravatar.cc/300?img=32",
-                address: "Av. Patriotismo 750, CDMX",
+                name: "Mónica Gómez",
                 nationality: "Mexicana",
                 occupation: "Abogada corporativa",
-                transactionality: "Solicita servicio bancario de alto nivel para gestionar su patrimonio",
-                volume: { amount: 120000, frequency: "mensual", cashHandling: "bajo" },
-                cashManagement: "Depósitos provenientes de clientes corporativos",
-                fundsOrigin: "Familiares involucrados en procesos legales, ninguno con perfil PEP",
-                pepRelatives: "No hay familiares PEPs",
-                correctRisk: "low",
-                riskFactors: {
+                transactionality: "Transferencias de clientes corporativos",
+                volume: "$120,000 mensual",
+                cashHandling: "Bajo",
+                fundsOrigin: "Honorarios profesionales verificables",
+                pepStatus: "Sin conexiones PEP",
+                correctRisk: {
                     transactional: "low",
                     geographic: "low",
                     profile: "low",
-                    pep: "low"
-                }
+                    pep: "low",
+                    final: "low"
+                },
+                explanation: "Riesgo BAJO con perfil coherente y operaciones justificadas."
             },
             {
                 id: 6,
-                name: "Luis Ramos Corona",
-                photo: "https://i.pravatar.cc/300?img=60",
-                address: "Calle Comercio 12, Iztapalapa",
+                name: "Luis Ramos",
                 nationality: "Mexicana",
                 occupation: "Comerciante informal",
-                transactionality: "Ventas en tianguis, manejo de efectivo, depósitos menores en cuenta bancaria",
-                volume: { amount: 5000, frequency: "diaria", cashHandling: "alto" },
-                cashManagement: "Depósitos en efectivo de $5,000 diarios",
-                fundsOrigin: "Transacciones diarias en efectivo con origen incierto",
-                pepRelatives: "Sin parientes PEPs",
-                correctRisk: "medium",
-                riskFactors: {
+                transactionality: "Depósitos diarios de $5,000 en efectivo",
+                volume: "$5,000 diario",
+                cashHandling: "Alto",
+                fundsOrigin: "Ventas en tianguis",
+                pepStatus: "Sin conexiones PEP",
+                correctRisk: {
                     transactional: "medium",
                     geographic: "low",
                     profile: "medium",
-                    pep: "low"
-                }
+                    pep: "low",
+                    final: "medium"
+                },
+                explanation: "Riesgo MEDIO por posible estructuración de depósitos."
             },
             {
                 id: 7,
-                name: "José Ríos Díaz",
-                photo: "https://i.pravatar.cc/300?img=13",
-                address: "Priv. Reforma 21, Morelia",
+                name: "José Ríos",
                 nationality: "Mexicana",
                 occupation: "Exfuncionario público",
-                transactionality: "Movimientos internacionales recientes, inversión en fondos privados",
-                volume: { amount: 250000, frequency: "mensual", cashHandling: "bajo" },
-                cashManagement: "Transferencias de fondos desde cuentas en paraísos fiscales",
-                fundsOrigin: "Exfuncionario de alto rango, parientes relacionados con contratos públicos",
-                pepRelatives: "Posible lavado de activos debido a conexiones con recursos públicos",
-                correctRisk: "high",
-                riskFactors: {
+                transactionality: "Transferencias desde paraísos fiscales",
+                volume: "$250,000 mensual",
+                cashHandling: "Bajo",
+                fundsOrigin: "Inversiones en el extranjero",
+                pepStatus: "PEP - Exfuncionario de alto rango",
+                correctRisk: {
                     transactional: "high",
                     geographic: "high",
                     profile: "high",
-                    pep: "high"
-                }
+                    pep: "high",
+                    final: "high"
+                },
+                explanation: "Riesgo ALTO por ser PEP con movimientos desde paraísos fiscales."
             },
             {
                 id: 8,
-                name: "Ana Robles Moreno",
-                photo: "https://i.pravatar.cc/300?img=44",
-                address: "Av. Salud 321, Monterrey",
+                name: "Ana Robles",
                 nationality: "Mexicana",
                 occupation: "Médico especialista",
-                transactionality: "Solicita crédito automotriz, ingresos por honorarios y nómina",
-                volume: { amount: 100000, frequency: "mensual", cashHandling: "bajo" },
-                cashManagement: "Ingresos provenientes de su consultorio y hospitales privados",
-                fundsOrigin: "Posible irregularidad en los pagos en efectivo que no concuerdan con su perfil",
-                pepRelatives: "Sin parientes PEPs",
-                correctRisk: "medium",
-                riskFactors: {
+                transactionality: "Ingresos por honorarios y nómina",
+                volume: "$100,000 mensual",
+                cashHandling: "Bajo",
+                fundsOrigin: "Pagos con irregularidades menores",
+                pepStatus: "Sin conexiones PEP",
+                correctRisk: {
                     transactional: "low",
                     geographic: "low",
                     profile: "medium",
-                    pep: "low"
-                }
+                    pep: "low",
+                    final: "medium"
+                },
+                explanation: "Riesgo MEDIO por irregularidades menores en pagos."
             },
             {
                 id: 9,
                 name: "Yu Chen",
-                photo: "https://i.pravatar.cc/300?img=5",
-                address: "Residencial UNAM, CDMX",
                 nationality: "China",
                 occupation: "Estudiante",
-                transactionality: "Recibe beca del gobierno chino, mantiene una cuenta para transferencias",
-                volume: { amount: 10000, frequency: "mensual", cashHandling: "bajo" },
-                cashManagement: "Transferencias mensuales del gobierno de China",
-                fundsOrigin: "Situación financiera muy dependiente de una beca gubernamental",
-                pepRelatives: "Sin parientes PEPs",
-                correctRisk: "low",
-                riskFactors: {
+                transactionality: "Transferencias mensuales del gobierno chino",
+                volume: "$10,000 mensual",
+                cashHandling: "Bajo",
+                fundsOrigin: "Beca gubernamental",
+                pepStatus: "Sin conexiones PEP",
+                correctRisk: {
                     transactional: "low",
                     geographic: "medium",
                     profile: "low",
-                    pep: "low"
-                }
+                    pep: "low",
+                    final: "low"
+                },
+                explanation: "Riesgo BAJO con fondos institucionales verificables."
             },
             {
                 id: 10,
-                name: "Daniel Cruz González",
-                photo: "https://i.pravatar.cc/300?img=7",
-                address: "Calle Startups 404, Querétaro",
+                name: "Daniel Cruz",
                 nationality: "Mexicana",
                 occupation: "Desarrollador Fintech",
-                transactionality: "Solicita cuenta bancaria para aplicación financiera, sin RFC",
-                volume: { amount: 20000, frequency: "mensual", cashHandling: "bajo" },
-                cashManagement: "Inversiones en criptomonedas y tecnología emergente",
-                fundsOrigin: "La empresa aún no está registrada ante el SAT",
-                pepRelatives: "Sin parientes PEPs",
-                correctRisk: "medium",
-                riskFactors: {
+                transactionality: "Inversiones en criptomonedas",
+                volume: "$20,000 mensual",
+                cashHandling: "Bajo",
+                fundsOrigin: "Empresa sin registro SAT",
+                pepStatus: "Sin conexiones PEP",
+                correctRisk: {
                     transactional: "medium",
                     geographic: "low",
                     profile: "medium",
-                    pep: "low"
-                }
+                    pep: "low",
+                    final: "medium"
+                },
+                explanation: "Riesgo MEDIO por falta de formalización empresarial."
             },
             {
                 id: 11,
-                name: "Antonio Rivera Marín",
-                photo: "https://i.pravatar.cc/300?img=70",
-                address: "Madero 200, Mexicali",
+                name: "Antonio Rivera",
                 nationality: "Mexicana",
                 occupation: "Pensionado",
-                transactionality: "Recibe pensión mensual, operaciones recurrentes en su cuenta por $10,000",
-                volume: { amount: 10000, frequency: "mensual", cashHandling: "bajo" },
-                cashManagement: "Pensión por parte del gobierno",
-                fundsOrigin: "Caso de bajo riesgo debido a ingresos estables y verificables",
-                pepRelatives: "Sin parientes PEPs",
-                correctRisk: "low",
-                riskFactors: {
+                transactionality: "Pensión gubernamental mensual",
+                volume: "$10,000 mensual",
+                cashHandling: "Bajo",
+                fundsOrigin: "Pensión del gobierno",
+                pepStatus: "Sin conexiones PEP",
+                correctRisk: {
                     transactional: "low",
                     geographic: "low",
                     profile: "low",
-                    pep: "low"
-                }
+                    pep: "low",
+                    final: "low"
+                },
+                explanation: "Riesgo BAJO con ingresos estables y verificables."
             },
             {
                 id: 12,
                 name: "Laura Méndez",
-                photo: "https://i.pravatar.cc/300?img=45",
-                address: "Guerrero 900, Monterrey",
                 nationality: "Mexicana",
                 occupation: "Modelo de TV",
-                transactionality: "Recibe pagos mensuales por contrato de exclusividad, operaciones por $50,000 mensuales",
-                volume: { amount: 50000, frequency: "mensual", cashHandling: "bajo" },
-                cashManagement: "Bajo, alta visibilidad en medios",
-                fundsOrigin: "Pagos por contrato y eventos",
-                pepRelatives: "Sin parientes PEPs",
-                correctRisk: "low",
-                riskFactors: {
+                transactionality: "Pagos por contratos de exclusividad",
+                volume: "$50,000 mensual",
+                cashHandling: "Bajo",
+                fundsOrigin: "Contratos verificables",
+                pepStatus: "Sin conexiones PEP",
+                correctRisk: {
                     transactional: "low",
                     geographic: "low",
                     profile: "low",
-                    pep: "low"
-                }
+                    pep: "low",
+                    final: "low"
+                },
+                explanation: "Riesgo BAJO con alta visibilidad pública y contratos claros."
             }
         ];
 
         // Estado de la aplicación
-        let gameState = {
-            currentClient: null,
-            completedClients: [],
-            totalScore: 0,
-            evaluations: {},
-            achievements: []
+        let appState = {
+            user: null,
+            currentExercise: null,
+            currentCaseIndex: 0,
+            startTime: null,
+            timer: null,
+            responses: {},
+            results: []
         };
 
-        // Inicializar la aplicación
-        function init() {
-            // Inicializar SCORM si está disponible
-            if (typeof SCORM_API !== 'undefined') {
-                SCORM_API.init();
-            }
+        // Registro de usuario
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            loadGameState();
-            renderClientList();
-            updateStats();
-        }
+            const userName = document.getElementById('userName').value.trim();
+            const userEmail = document.getElementById('userEmail').value.trim();
+            const userPhone = document.getElementById('userPhone').value.trim();
+            const termsAccept = document.getElementById('termsAccept').checked;
 
-        // Cargar estado del juego
-        function loadGameState() {
-            const saved = localStorage.getItem('kycGameState');
-            if (saved) {
-                gameState = JSON.parse(saved);
+            if (!userName || !userEmail || !userPhone || !termsAccept) {
+                alert('Por favor completa todos los campos y acepta los términos');
+                return;
             }
-        }
 
-        // Guardar estado del juego
-        function saveGameState() {
-            localStorage.setItem('kycGameState', JSON.stringify(gameState));
-        }
+            // Guardar datos del usuario
+            appState.user = {
+                name: userName,
+                email: userEmail,
+                phone: userPhone,
+                registrationTime: new Date().toISOString()
+            };
 
-        // Renderizar lista de clientes
-        function renderClientList() {
-            const listContainer = document.getElementById('clientList');
-            listContainer.innerHTML = '';
+            // Guardar en localStorage para marketing
+            saveUserData(appState.user);
 
-            clients.forEach(client => {
-                const isCompleted = gameState.completedClients.includes(client.id);
-                const card = document.createElement('div');
-                card.className = `client-card ${isCompleted ? 'completed' : ''}`;
-                card.onclick = () => selectClient(client.id);
+            // Mostrar información del usuario
+            document.getElementById('userNameDisplay').textContent = userName;
+            document.getElementById('userEmailDisplay').textContent = userEmail;
+            document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
 
-                card.innerHTML = `
-                    <div class="client-info">
-                        <div class="client-avatar">
-                            <img src="${client.photo}" alt="${client.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='${client.name.split(' ').map(n => n[0]).join('')}'">
-                        </div>
-                        <div>
-                            <h3>${client.name}</h3>
-                            <p style="color: #6b7280; font-size: 0.9rem;">${client.occupation}</p>
-                            ${isCompleted ? '<span style="color: #10b981;">✓ Completado</span>' : '<span style="color: #9ca3af;">Pendiente</span>'}
-                        </div>
-                    </div>
-                `;
+            // Cambiar pantalla
+            showScreen('exerciseScreen');
+            prepareExercise();
+        });
 
-                listContainer.appendChild(card);
+        // Guardar datos para marketing
+        function saveUserData(userData) {
+            let marketingData = JSON.parse(localStorage.getItem('kycMarketingData') || '[]');
+            marketingData.push({
+                ...userData,
+                exercises: []
             });
+            localStorage.setItem('kycMarketingData', JSON.stringify(marketingData));
         }
 
-        // Seleccionar cliente
-        function selectClient(clientId) {
-            const client = clients.find(c => c.id === clientId);
-            gameState.currentClient = client;
-
-            // Actualizar UI
-            document.querySelectorAll('.client-card').forEach(card => {
-                card.classList.remove('active');
+        // Mostrar pantalla
+        function showScreen(screenId) {
+            document.querySelectorAll('[id$="Screen"]').forEach(screen => {
+                screen.classList.add('hidden');
             });
-            event.currentTarget.classList.add('active');
-
-            renderEvaluation(client);
+            document.getElementById(screenId).classList.remove('hidden');
         }
 
-        // Renderizar evaluación
-        function renderEvaluation(client) {
+        // Preparar ejercicio
+        function prepareExercise() {
+            // Seleccionar 5 casos aleatorios
+            const shuffled = [...clientsDatabase].sort(() => 0.5 - Math.random());
+            const selectedCases = shuffled.slice(0, 5);
+            
+            appState.currentExercise = {
+                cases: selectedCases,
+                responses: {},
+                startTime: null
+            };
+
+            // Mostrar preview de casos
+            const preview = document.getElementById('casesPreview');
+            preview.innerHTML = selectedCases.map((c, i) => 
+                `<div class="case-badge">C${i + 1}</div>`
+            ).join('');
+        }
+
+        // Iniciar ejercicio
+        function startExercise() {
+            appState.currentCaseIndex = 0;
+            appState.startTime = new Date();
+            appState.responses = {};
+            
+            showScreen('evaluationScreen');
+            renderProgressSteps();
+            startTimer();
+            loadCase(0);
+        }
+
+        // Renderizar pasos de progreso
+        function renderProgressSteps() {
+            const stepsContainer = document.getElementById('progressSteps');
+            const cases = appState.currentExercise.cases;
+            
+            stepsContainer.innerHTML = cases.map((c, i) => `
+                <div class="progress-step">
+                    <div class="step-circle" id="step-${i}">${i + 1}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280;">Caso ${i + 1}</div>
+                </div>
+            `).join('');
+        }
+
+        // Iniciar timer
+        function startTimer() {
+            let seconds = 0;
+            appState.timer = setInterval(() => {
+                seconds++;
+                const minutes = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                document.getElementById('timerDisplay').textContent = 
+                    `⏱️ Tiempo: ${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Cargar caso
+        function loadCase(index) {
+            const currentCase = appState.currentExercise.cases[index];
             const container = document.getElementById('evaluationContent');
             
-            container.innerHTML = `
-                <div class="client-detail">
-                    <h2>📊 Evaluación de Riesgo: ${client.name}</h2>
-                    
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <strong>Nacionalidad</strong>
-                            <span>${client.nationality}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Ocupación</strong>
-                            <span>${client.occupation}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Dirección</strong>
-                            <span>${client.address}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Volumen de Operaciones</strong>
-                            <span>${client.volume.amount.toLocaleString()} ${client.volume.frequency}</span>
-                        </div>
-                    </div>
+            // Actualizar progreso
+            updateProgress(index);
+            
+            // Actualizar botones
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').classList.toggle('hidden', index === 4);
+            document.getElementById('finishBtn').classList.toggle('hidden', index !== 4);
 
-                    <div class="detail-grid" style="margin-top: 15px;">
-                        <div class="detail-item" style="grid-column: span 2;">
-                            <strong>Transaccionalidad</strong>
-                            <span>${client.transactionality}</span>
+            container.innerHTML = `
+                <div class="client-header">
+                    <h2>Caso ${index + 1} de 5: ${currentCase.name}</h2>
+                    <div class="client-details">
+                        <div class="detail-box">
+                            <strong>Nacionalidad</strong>
+                            ${currentCase.nationality}
                         </div>
-                        <div class="detail-item" style="grid-column: span 2;">
-                            <strong>Manejo de Efectivo</strong>
-                            <span>${client.cashManagement}</span>
+                        <div class="detail-box">
+                            <strong>Ocupación</strong>
+                            ${currentCase.occupation}
                         </div>
-                        <div class="detail-item" style="grid-column: span 2;">
-                            <strong>Origen de Fondos</strong>
-                            <span>${client.fundsOrigin}</span>
+                        <div class="detail-box">
+                            <strong>Volumen</strong>
+                            ${currentCase.volume}
                         </div>
-                        <div class="detail-item" style="grid-column: span 2;">
-                            <strong>Parientes PEPs</strong>
-                            <span>${client.pepRelatives}</span>
+                        <div class="detail-box">
+                            <strong>Manejo Efectivo</strong>
+                            ${currentCase.cashHandling}
                         </div>
                     </div>
                 </div>
 
-                <div class="risk-evaluation">
-                    <h3 style="color: #1f2937; margin-bottom: 20px;">
-                        🎯 Evaluación de Factores de Riesgo
+                <div style="background: #fef3c7; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: #92400e; margin-bottom: 10px;">📊 Información Transaccional</h3>
+                    <p><strong>Transaccionalidad:</strong> ${currentCase.transactionality}</p>
+                    <p><strong>Origen de Fondos:</strong> ${currentCase.fundsOrigin}</p>
+                    <p><strong>Status PEP:</strong> ${currentCase.pepStatus}</p>
+                </div>
+
+                <!-- Factor 1: Riesgo Transaccional -->
+                <div class="risk-section" id="section-transactional">
+                    <h3>
+                        <span class="risk-indicator">1</span>
+                        Riesgo Transaccional
                     </h3>
-
-                    <!-- Factor 1: Riesgo Transaccional -->
-                    <div class="risk-section">
-                        <h3>
-                            <span class="risk-indicator risk-medium">1</span>
-                            Riesgo Transaccional
-                            <span class="tooltip">❓
-                                <span class="tooltiptext">Evalúa el volumen, frecuencia y naturaleza de las transacciones del cliente</span>
-                            </span>
-                        </h3>
-                        <div class="risk-options">
-                            <div class="risk-option" onclick="selectRisk('transactional', 'low', this)">
-                                <div style="font-size: 2rem;">🟢</div>
-                                <strong>Bajo</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Transacciones regulares y justificadas</p>
-                            </div>
-                            <div class="risk-option" onclick="selectRisk('transactional', 'medium', this)">
-                                <div style="font-size: 2rem;">🟡</div>
-                                <strong>Medio</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Algunas irregularidades menores</p>
-                            </div>
-                            <div class="risk-option" onclick="selectRisk('transactional', 'high', this)">
-                                <div style="font-size: 2rem;">🔴</div>
-                                <strong>Alto</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Transacciones inusuales o sin justificar</p>
-                            </div>
+                    <div class="risk-options">
+                        <div class="risk-option" onclick="selectRisk('transactional', 'low', this)">
+                            <div style="font-size: 2rem;">🟢</div>
+                            <strong>Bajo</strong>
                         </div>
-                        <div class="justification-area">
-                            <textarea id="transactional-justification" placeholder="Justifica tu evaluación del riesgo transaccional..."></textarea>
+                        <div class="risk-option" onclick="selectRisk('transactional', 'medium', this)">
+                            <div style="font-size: 2rem;">🟡</div>
+                            <strong>Medio</strong>
+                        </div>
+                        <div class="risk-option" onclick="selectRisk('transactional', 'high', this)">
+                            <div style="font-size: 2rem;">🔴</div>
+                            <strong>Alto</strong>
                         </div>
                     </div>
+                    <div class="justification-area">
+                        <textarea id="just-transactional" placeholder="Justifica tu evaluación del riesgo transaccional..."></textarea>
+                    </div>
+                </div>
 
-                    <!-- Factor 2: Riesgo Geográfico -->
-                    <div class="risk-section">
-                        <h3>
-                            <span class="risk-indicator risk-medium">2</span>
-                            Riesgo Geográfico
-                            <span class="tooltip">❓
-                                <span class="tooltiptext">Considera el riesgo asociado con el país de origen, residencia y operaciones</span>
-                            </span>
-                        </h3>
-                        <div class="risk-options">
-                            <div class="risk-option" onclick="selectRisk('geographic', 'low', this)">
-                                <div style="font-size: 2rem;">🟢</div>
-                                <strong>Bajo</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Países de bajo riesgo</p>
-                            </div>
-                            <div class="risk-option" onclick="selectRisk('geographic', 'medium', this)">
-                                <div style="font-size: 2rem;">🟡</div>
-                                <strong>Medio</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Países con riesgo moderado</p>
-                            </div>
-                            <div class="risk-option" onclick="selectRisk('geographic', 'high', this)">
-                                <div style="font-size: 2rem;">🔴</div>
-                                <strong>Alto</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Paraísos fiscales o países sancionados</p>
-                            </div>
+                <!-- Factor 2: Riesgo Geográfico -->
+                <div class="risk-section" id="section-geographic">
+                    <h3>
+                        <span class="risk-indicator">2</span>
+                        Riesgo Geográfico
+                    </h3>
+                    <div class="risk-options">
+                        <div class="risk-option" onclick="selectRisk('geographic', 'low', this)">
+                            <div style="font-size: 2rem;">🟢</div>
+                            <strong>Bajo</strong>
                         </div>
-                        <div class="justification-area">
-                            <textarea id="geographic-justification" placeholder="Justifica tu evaluación del riesgo geográfico..."></textarea>
+                        <div class="risk-option" onclick="selectRisk('geographic', 'medium', this)">
+                            <div style="font-size: 2rem;">🟡</div>
+                            <strong>Medio</strong>
+                        </div>
+                        <div class="risk-option" onclick="selectRisk('geographic', 'high', this)">
+                            <div style="font-size: 2rem;">🔴</div>
+                            <strong>Alto</strong>
                         </div>
                     </div>
+                    <div class="justification-area">
+                        <textarea id="just-geographic" placeholder="Justifica tu evaluación del riesgo geográfico..."></textarea>
+                    </div>
+                </div>
 
-                    <!-- Factor 3: Riesgo del Perfil -->
-                    <div class="risk-section">
-                        <h3>
-                            <span class="risk-indicator risk-medium">3</span>
-                            Riesgo del Perfil del Cliente
-                            <span class="tooltip">❓
-                                <span class="tooltiptext">Evalúa la coherencia entre la actividad económica y el perfil del cliente</span>
-                            </span>
-                        </h3>
-                        <div class="risk-options">
-                            <div class="risk-option" onclick="selectRisk('profile', 'low', this)">
-                                <div style="font-size: 2rem;">🟢</div>
-                                <strong>Bajo</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Perfil coherente y verificable</p>
-                            </div>
-                            <div class="risk-option" onclick="selectRisk('profile', 'medium', this)">
-                                <div style="font-size: 2rem;">🟡</div>
-                                <strong>Medio</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Algunas inconsistencias</p>
-                            </div>
-                            <div class="risk-option" onclick="selectRisk('profile', 'high', this)">
-                                <div style="font-size: 2rem;">🔴</div>
-                                <strong>Alto</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Perfil inconsistente o no verificable</p>
-                            </div>
+                <!-- Factor 3: Riesgo del Perfil -->
+                <div class="risk-section" id="section-profile">
+                    <h3>
+                        <span class="risk-indicator">3</span>
+                        Riesgo del Perfil
+                    </h3>
+                    <div class="risk-options">
+                        <div class="risk-option" onclick="selectRisk('profile', 'low', this)">
+                            <div style="font-size: 2rem;">🟢</div>
+                            <strong>Bajo</strong>
                         </div>
-                        <div class="justification-area">
-                            <textarea id="profile-justification" placeholder="Justifica tu evaluación del riesgo del perfil..."></textarea>
+                        <div class="risk-option" onclick="selectRisk('profile', 'medium', this)">
+                            <div style="font-size: 2rem;">🟡</div>
+                            <strong>Medio</strong>
+                        </div>
+                        <div class="risk-option" onclick="selectRisk('profile', 'high', this)">
+                            <div style="font-size: 2rem;">🔴</div>
+                            <strong>Alto</strong>
                         </div>
                     </div>
+                    <div class="justification-area">
+                        <textarea id="just-profile" placeholder="Justifica tu evaluación del riesgo del perfil..."></textarea>
+                    </div>
+                </div>
 
-                    <!-- Factor 4: Riesgo PEP -->
-                    <div class="risk-section">
-                        <h3>
-                            <span class="risk-indicator risk-medium">4</span>
-                            Riesgo PEP (Persona Expuesta Políticamente)
-                            <span class="tooltip">❓
-                                <span class="tooltiptext">Evalúa si el cliente o sus familiares son PEPs</span>
-                            </span>
-                        </h3>
-                        <div class="risk-options">
-                            <div class="risk-option" onclick="selectRisk('pep', 'low', this)">
-                                <div style="font-size: 2rem;">🟢</div>
-                                <strong>Bajo</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Sin conexiones PEP</p>
-                            </div>
-                            <div class="risk-option" onclick="selectRisk('pep', 'medium', this)">
-                                <div style="font-size: 2rem;">🟡</div>
-                                <strong>Medio</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Conexiones PEP indirectas</p>
-                            </div>
-                            <div class="risk-option" onclick="selectRisk('pep', 'high', this)">
-                                <div style="font-size: 2rem;">🔴</div>
-                                <strong>Alto</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Cliente o familiares directos PEP</p>
-                            </div>
+                <!-- Factor 4: Riesgo PEP -->
+                <div class="risk-section" id="section-pep">
+                    <h3>
+                        <span class="risk-indicator">4</span>
+                        Riesgo PEP
+                    </h3>
+                    <div class="risk-options">
+                        <div class="risk-option" onclick="selectRisk('pep', 'low', this)">
+                            <div style="font-size: 2rem;">🟢</div>
+                            <strong>Bajo</strong>
                         </div>
-                        <div class="justification-area">
-                            <textarea id="pep-justification" placeholder="Justifica tu evaluación del riesgo PEP..."></textarea>
+                        <div class="risk-option" onclick="selectRisk('pep', 'medium', this)">
+                            <div style="font-size: 2rem;">🟡</div>
+                            <strong>Medio</strong>
+                        </div>
+                        <div class="risk-option" onclick="selectRisk('pep', 'high', this)">
+                            <div style="font-size: 2rem;">🔴</div>
+                            <strong>Alto</strong>
                         </div>
                     </div>
+                    <div class="justification-area">
+                        <textarea id="just-pep" placeholder="Justifica tu evaluación del riesgo PEP..."></textarea>
+                    </div>
+                </div>
 
-                    <!-- Evaluación Final -->
-                    <div class="risk-section" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe);">
-                        <h3>
-                            <span class="risk-indicator risk-high">★</span>
-                            Evaluación Final del Riesgo
-                        </h3>
-                        <div class="risk-options">
-                            <div class="risk-option" onclick="selectFinalRisk('low', this)">
-                                <div style="font-size: 3rem;">🟢</div>
-                                <strong>RIESGO BAJO</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Cliente de bajo riesgo</p>
-                            </div>
-                            <div class="risk-option" onclick="selectFinalRisk('medium', this)">
-                                <div style="font-size: 3rem;">🟡</div>
-                                <strong>RIESGO MEDIO</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Requiere monitoreo regular</p>
-                            </div>
-                            <div class="risk-option" onclick="selectFinalRisk('high', this)">
-                                <div style="font-size: 3rem;">🔴</div>
-                                <strong>RIESGO ALTO</strong>
-                                <p style="font-size: 0.85rem; margin-top: 5px;">Requiere debida diligencia reforzada</p>
-                            </div>
+                <!-- Evaluación Final -->
+                <div class="risk-section" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe);">
+                    <h3>
+                        <span class="risk-indicator" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">★</span>
+                        Evaluación Final del Riesgo
+                    </h3>
+                    <div class="risk-options">
+                        <div class="risk-option" onclick="selectRisk('final', 'low', this)">
+                            <div style="font-size: 3rem;">🟢</div>
+                            <strong>RIESGO BAJO</strong>
                         </div>
-                        <div class="justification-area">
-                            <textarea id="final-justification" placeholder="Proporciona una conclusión general sobre el nivel de riesgo del cliente y las medidas recomendadas..." style="min-height: 120px;"></textarea>
+                        <div class="risk-option" onclick="selectRisk('final', 'medium', this)">
+                            <div style="font-size: 3rem;">🟡</div>
+                            <strong>RIESGO MEDIO</strong>
+                        </div>
+                        <div class="risk-option" onclick="selectRisk('final', 'high', this)">
+                            <div style="font-size: 3rem;">🔴</div>
+                            <strong>RIESGO ALTO</strong>
                         </div>
                     </div>
-
-                    <div class="action-buttons">
-                        <button class="btn btn-secondary" onclick="resetEvaluation()">
-                            🔄 Reiniciar Evaluación
-                        </button>
-                        <button class="btn btn-primary" onclick="submitEvaluation()">
-                            ✅ Enviar Evaluación
-                        </button>
+                    <div class="justification-area">
+                        <textarea id="just-final" placeholder="Proporciona tu conclusión sobre el nivel de riesgo del cliente..." style="min-height: 150px;"></textarea>
                     </div>
                 </div>
             `;
 
-            // Restaurar evaluación previa si existe
-            if (gameState.evaluations[client.id]) {
-                restoreEvaluation(client.id);
+            // Restaurar respuestas previas si existen
+            const caseId = currentCase.id;
+            if (appState.responses[caseId]) {
+                restoreResponses(caseId);
             }
         }
-
-        // Variables para almacenar las selecciones
-        let currentEvaluation = {
-            transactional: null,
-            geographic: null,
-            profile: null,
-            pep: null,
-            finalRisk: null,
-            justifications: {}
-        };
 
         // Seleccionar riesgo
         function selectRisk(category, level, element) {
-            // Limpiar selección previa
             const parent = element.parentElement;
             parent.querySelectorAll('.risk-option').forEach(opt => {
                 opt.classList.remove('selected');
             });
-            
-            // Marcar como seleccionado
             element.classList.add('selected');
-            
-            // Guardar selección
-            currentEvaluation[category] = level;
+
+            // Guardar respuesta
+            const caseId = appState.currentExercise.cases[appState.currentCaseIndex].id;
+            if (!appState.responses[caseId]) {
+                appState.responses[caseId] = {};
+            }
+            appState.responses[caseId][category] = level;
+
+            // Marcar sección como completada
+            document.getElementById(`section-${category}`).classList.add('completed');
         }
 
-        // Seleccionar riesgo final
-        function selectFinalRisk(level, element) {
-            // Limpiar selección previa
-            const parent = element.parentElement;
-            parent.querySelectorAll('.risk-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            
-            // Marcar como seleccionado
-            element.classList.add('selected');
-            
-            // Guardar selección
-            currentEvaluation.finalRisk = level;
-        }
-
-        // Reiniciar evaluación
-        function resetEvaluation() {
-            currentEvaluation = {
-                transactional: null,
-                geographic: null,
-                profile: null,
-                pep: null,
-                finalRisk: null,
-                justifications: {}
-            };
-            
-            // Limpiar UI
-            document.querySelectorAll('.risk-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            
-            document.querySelectorAll('textarea').forEach(textarea => {
-                textarea.value = '';
-            });
-        }
-
-        // Enviar evaluación
-        function submitEvaluation() {
-            // Validar que todos los campos estén completos
-            if (!currentEvaluation.transactional || !currentEvaluation.geographic || 
-                !currentEvaluation.profile || !currentEvaluation.pep || !currentEvaluation.finalRisk) {
-                alert('Por favor completa todas las evaluaciones de riesgo');
-                return;
-            }
-
-            // Obtener justificaciones
-            currentEvaluation.justifications = {
-                transactional: document.getElementById('transactional-justification').value,
-                geographic: document.getElementById('geographic-justification').value,
-                profile: document.getElementById('profile-justification').value,
-                pep: document.getElementById('pep-justification').value,
-                final: document.getElementById('final-justification').value
-            };
-
-            // Validar justificaciones
-            const hasJustifications = Object.values(currentEvaluation.justifications).every(j => j && j.length > 10);
-            if (!hasJustifications) {
-                alert('Por favor proporciona justificaciones detalladas para cada evaluación (mínimo 10 caracteres)');
-                return;
-            }
-
-            // Calcular puntuación
-            const score = calculateScore();
-            
-            // Guardar evaluación
-            gameState.evaluations[gameState.currentClient.id] = {
-                ...currentEvaluation,
-                score: score,
-                timestamp: new Date().toISOString()
-            };
-
-            // Marcar como completado
-            if (!gameState.completedClients.includes(gameState.currentClient.id)) {
-                gameState.completedClients.push(gameState.currentClient.id);
-                gameState.totalScore += score;
-            }
-
-            // Verificar logros
-            checkAchievements();
-
-            // Guardar estado
-            saveGameState();
-            
-            // Integración con SCORM si está disponible
-            if (typeof SCORM_API !== 'undefined') {
-                SCORM_API.setScore(score);
-                SCORM_API.saveInteraction(
-                    gameState.currentClient.name,
-                    currentEvaluation.finalRisk,
-                    gameState.currentClient.correctRisk,
-                    score
-                );
-                SCORM_API.setProgress(gameState.completedClients.length, 12);
-            }
-
-            // Mostrar resultados
-            showResults(score);
-
-            // Actualizar estadísticas
-            updateStats();
-        }
-
-        // Calcular puntuación
-        function calculateScore() {
-            const client = gameState.currentClient;
-            let score = 0;
-            let maxScore = 100;
-
-            // Puntos por cada factor correcto (15 puntos cada uno)
-            const factors = ['transactional', 'geographic', 'profile', 'pep'];
-            factors.forEach(factor => {
-                if (currentEvaluation[factor] === client.riskFactors[factor]) {
-                    score += 15;
+        // Actualizar progreso
+        function updateProgress(index) {
+            // Actualizar círculos
+            document.querySelectorAll('.step-circle').forEach((circle, i) => {
+                circle.classList.remove('active', 'completed');
+                if (i < index) {
+                    circle.classList.add('completed');
+                } else if (i === index) {
+                    circle.classList.add('active');
                 }
             });
 
-            // Puntos por evaluación final correcta (30 puntos)
-            if (currentEvaluation.finalRisk === client.correctRisk) {
-                score += 30;
-            }
-
-            // Puntos por justificaciones (10 puntos)
-            const justificationQuality = evaluateJustifications();
-            score += justificationQuality;
-
-            return Math.min(score, maxScore);
+            // Actualizar barra
+            const progress = ((index + 1) / 5) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
         }
 
-        // Evaluar calidad de justificaciones
-        function evaluateJustifications() {
-            let points = 0;
-            const justifications = currentEvaluation.justifications;
+        // Caso anterior
+        function previousCase() {
+            if (appState.currentCaseIndex > 0) {
+                saveCurrentResponses();
+                appState.currentCaseIndex--;
+                loadCase(appState.currentCaseIndex);
+            }
+        }
 
-            // Evaluar longitud y palabras clave
-            Object.values(justifications).forEach(just => {
-                if (just.length > 50) points += 1;
-                if (just.length > 100) points += 1;
-                
-                // Palabras clave relevantes
-                const keywords = ['riesgo', 'transacción', 'origen', 'fondos', 'pep', 'verificar', 
-                                'monitoreo', 'debida diligencia', 'sospechoso', 'irregular'];
-                const hasKeywords = keywords.some(keyword => just.toLowerCase().includes(keyword));
-                if (hasKeywords) points += 0.5;
+        // Siguiente caso
+        function nextCase() {
+            if (validateCurrentCase()) {
+                saveCurrentResponses();
+                appState.currentCaseIndex++;
+                loadCase(appState.currentCaseIndex);
+            }
+        }
+
+        // Guardar respuestas actuales
+        function saveCurrentResponses() {
+            const caseId = appState.currentExercise.cases[appState.currentCaseIndex].id;
+            
+            if (!appState.responses[caseId]) {
+                appState.responses[caseId] = {};
+            }
+
+            // Guardar justificaciones
+            appState.responses[caseId].justifications = {
+                transactional: document.getElementById('just-transactional').value,
+                geographic: document.getElementById('just-geographic').value,
+                profile: document.getElementById('just-profile').value,
+                pep: document.getElementById('just-pep').value,
+                final: document.getElementById('just-final').value
+            };
+        }
+
+        // Validar caso actual
+        function validateCurrentCase() {
+            const caseId = appState.currentExercise.cases[appState.currentCaseIndex].id;
+            const responses = appState.responses[caseId] || {};
+
+            // Verificar que todos los campos estén completos
+            const requiredFields = ['transactional', 'geographic', 'profile', 'pep', 'final'];
+            for (let field of requiredFields) {
+                if (!responses[field]) {
+                    alert(`Por favor completa la evaluación de ${field === 'final' ? 'riesgo final' : 'riesgo ' + field}`);
+                    return false;
+                }
+            }
+
+            // Verificar justificaciones
+            const justifications = {
+                transactional: document.getElementById('just-transactional').value,
+                geographic: document.getElementById('just-geographic').value,
+                profile: document.getElementById('just-profile').value,
+                pep: document.getElementById('just-pep').value,
+                final: document.getElementById('just-final').value
+            };
+
+            for (let [key, value] of Object.entries(justifications)) {
+                if (!value || value.length < 20) {
+                    alert(`Por favor proporciona una justificación más detallada para ${key === 'final' ? 'la evaluación final' : key}`);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Restaurar respuestas
+        function restoreResponses(caseId) {
+            const responses = appState.responses[caseId];
+            if (!responses) return;
+
+            // Restaurar selecciones
+            ['transactional', 'geographic', 'profile', 'pep', 'final'].forEach(category => {
+                if (responses[category]) {
+                    const option = document.querySelector(`.risk-option[onclick*="${category}'][onclick*="${responses[category]}"]`);
+                    if (option) option.click();
+                }
             });
 
-            return Math.min(points, 10);
+            // Restaurar justificaciones
+            if (responses.justifications) {
+                Object.entries(responses.justifications).forEach(([key, value]) => {
+                    const textarea = document.getElementById(`just-${key}`);
+                    if (textarea) textarea.value = value;
+                });
+            }
+        }
+
+        // Finalizar ejercicio
+        function finishExercise() {
+            if (!validateCurrentCase()) return;
+            
+            saveCurrentResponses();
+            clearInterval(appState.timer);
+            
+            // Calcular resultados
+            calculateResults();
+            
+            // Mostrar resultados
+            showScreen('resultsScreen');
+            displayResults();
+        }
+
+        // Calcular resultados
+        function calculateResults() {
+            appState.results = [];
+            let totalScore = 0;
+
+            appState.currentExercise.cases.forEach(caseData => {
+                const responses = appState.responses[caseData.id];
+                const correct = caseData.correctRisk;
+                let caseScore = 0;
+                
+                // Calcular puntos por factor (15 puntos cada uno)
+                const factors = ['transactional', 'geographic', 'profile', 'pep'];
+                const factorResults = {};
+                
+                factors.forEach(factor => {
+                    const isCorrect = responses[factor] === correct[factor];
+                    if (isCorrect) caseScore += 15;
+                    factorResults[factor] = {
+                        response: responses[factor],
+                        correct: correct[factor],
+                        isCorrect: isCorrect
+                    };
+                });
+
+                // Evaluación final (40 puntos)
+                const finalCorrect = responses.final === correct.final;
+                if (finalCorrect) caseScore += 40;
+
+                appState.results.push({
+                    case: caseData,
+                    score: caseScore,
+                    maxScore: 100,
+                    factors: factorResults,
+                    finalRisk: {
+                        response: responses.final,
+                        correct: correct.final,
+                        isCorrect: finalCorrect
+                    },
+                    justifications: responses.justifications
+                });
+
+                totalScore += caseScore;
+            });
+
+            appState.finalScore = totalScore;
+            appState.maxPossibleScore = 500;
+            appState.percentage = (totalScore / 500) * 100;
         }
 
         // Mostrar resultados
-        function showResults(score) {
-            const modal = document.getElementById('resultModal');
-            const client = gameState.currentClient;
+        function displayResults() {
+            // Puntuación final
+            document.getElementById('finalScore').textContent = appState.finalScore;
             
-            // Título según el resultado
-            let title = '¡Evaluación Completada!';
-            let feedbackClass = '';
-            
-            if (score >= 90) {
-                title = '¡Excelente Trabajo! 🏆';
-                feedbackClass = 'excellent';
-            } else if (score >= 70) {
-                title = '¡Buen Trabajo! 👍';
-                feedbackClass = 'good';
-            } else if (score >= 50) {
-                title = 'Resultado Regular 📊';
-                feedbackClass = 'regular';
+            // Calificación
+            let grade, gradeClass;
+            if (appState.percentage >= 90) {
+                grade = 'A - Excelente';
+                gradeClass = 'grade-a';
+            } else if (appState.percentage >= 80) {
+                grade = 'B - Bueno';
+                gradeClass = 'grade-b';
+            } else if (appState.percentage >= 70) {
+                grade = 'C - Regular';
+                gradeClass = 'grade-c';
             } else {
-                title = 'Necesitas Mejorar 📚';
-                feedbackClass = 'poor';
+                grade = 'D - Necesita Mejorar';
+                gradeClass = 'grade-d';
             }
 
-            document.getElementById('modalTitle').innerHTML = title;
-            document.getElementById('modalScore').innerHTML = score + '/100';
+            const gradeBadge = document.getElementById('gradeBadge');
+            gradeBadge.textContent = grade;
+            gradeBadge.className = `grade-badge ${gradeClass}`;
 
-            // Generar feedback detallado
-            let feedback = '<h3>📋 Retroalimentación Detallada</h3>';
-            
-            // Comparar cada factor
-            const factors = [
-                { key: 'transactional', label: 'Riesgo Transaccional' },
-                { key: 'geographic', label: 'Riesgo Geográfico' },
-                { key: 'profile', label: 'Riesgo del Perfil' },
-                { key: 'pep', label: 'Riesgo PEP' }
-            ];
+            // Mostrar certificado si aprobó
+            if (appState.percentage >= 80) {
+                document.getElementById('certificatePreview').classList.remove('hidden');
+                document.getElementById('certName').textContent = appState.user.name;
+                document.getElementById('certScore').textContent = appState.finalScore;
+                document.getElementById('certDate').textContent = new Date().toLocaleDateString();
+            }
 
-            feedback += '<div style="margin-top: 15px;">';
-            factors.forEach(factor => {
-                const isCorrect = currentEvaluation[factor.key] === client.riskFactors[factor.key];
-                const icon = isCorrect ? '✅' : '❌';
-                const yourAnswer = currentEvaluation[factor.key];
-                const correctAnswer = client.riskFactors[factor.key];
-                
-                feedback += `
-                    <div style="margin-bottom: 10px; padding: 10px; background: ${isCorrect ? '#d1fae5' : '#fee2e2'}; border-radius: 8px;">
-                        <strong>${icon} ${factor.label}</strong><br>
-                        Tu respuesta: <span style="text-transform: uppercase;">${yourAnswer}</span><br>
-                        ${!isCorrect ? `Respuesta correcta: <span style="text-transform: uppercase; color: #ef4444;">${correctAnswer}</span>` : ''}
+            // Resultados detallados
+            const detailedContainer = document.getElementById('detailedResults');
+            detailedContainer.innerHTML = '<h2>📊 Análisis Detallado por Caso</h2>';
+
+            appState.results.forEach((result, index) => {
+                const scoreClass = result.score >= 80 ? 'perfect' : 
+                                 result.score >= 60 ? 'good' :
+                                 result.score >= 40 ? 'regular' : 'poor';
+
+                detailedContainer.innerHTML += `
+                    <div class="result-case">
+                        <div class="result-case-header">
+                            <h3>Caso ${index + 1}: ${result.case.name}</h3>
+                            <div class="result-score ${scoreClass}">${result.score}/100</div>
+                        </div>
+
+                        <div class="result-factors">
+                            <div class="result-factor ${result.factors.transactional.isCorrect ? 'correct' : 'incorrect'}">
+                                <strong>Riesgo Transaccional</strong>
+                                <div>Tu respuesta: ${result.factors.transactional.response.toUpperCase()}</div>
+                                ${!result.factors.transactional.isCorrect ? 
+                                    `<div style="color: var(--danger);">Correcto: ${result.factors.transactional.correct.toUpperCase()}</div>` : ''}
+                            </div>
+
+                            <div class="result-factor ${result.factors.geographic.isCorrect ? 'correct' : 'incorrect'}">
+                                <strong>Riesgo Geográfico</strong>
+                                <div>Tu respuesta: ${result.factors.geographic.response.toUpperCase()}</div>
+                                ${!result.factors.geographic.isCorrect ? 
+                                    `<div style="color: var(--danger);">Correcto: ${result.factors.geographic.correct.toUpperCase()}</div>` : ''}
+                            </div>
+
+                            <div class="result-factor ${result.factors.profile.isCorrect ? 'correct' : 'incorrect'}">
+                                <strong>Riesgo del Perfil</strong>
+                                <div>Tu respuesta: ${result.factors.profile.response.toUpperCase()}</div>
+                                ${!result.factors.profile.isCorrect ? 
+                                    `<div style="color: var(--danger);">Correcto: ${result.factors.profile.correct.toUpperCase()}</div>` : ''}
+                            </div>
+
+                            <div class="result-factor ${result.factors.pep.isCorrect ? 'correct' : 'incorrect'}">
+                                <strong>Riesgo PEP</strong>
+                                <div>Tu respuesta: ${result.factors.pep.response.toUpperCase()}</div>
+                                ${!result.factors.pep.isCorrect ? 
+                                    `<div style="color: var(--danger);">Correcto: ${result.factors.pep.correct.toUpperCase()}</div>` : ''}
+                            </div>
+                        </div>
+
+                        <div class="result-factor ${result.finalRisk.isCorrect ? 'correct' : 'incorrect'}" style="margin-top: 15px;">
+                            <strong>Evaluación Final</strong>
+                            <div>Tu respuesta: ${result.finalRisk.response.toUpperCase()}</div>
+                            ${!result.finalRisk.isCorrect ? 
+                                `<div style="color: var(--danger);">Correcto: ${result.finalRisk.correct.toUpperCase()}</div>` : ''}
+                        </div>
+
+                        <div class="justification-review">
+                            <h4>📝 Tu Justificación Final:</h4>
+                            <p class="justification-text">${result.justifications.final}</p>
+                        </div>
+
+                        <div style="background: #f0f9ff; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                            <h4 style="color: var(--primary); margin-bottom: 10px;">💡 Explicación Correcta:</h4>
+                            <p style="color: #0c4a6e;">${result.case.explanation}</p>
+                        </div>
                     </div>
                 `;
             });
 
-            // Evaluación final
-            const finalCorrect = currentEvaluation.finalRisk === client.correctRisk;
-            feedback += `
-                <div style="margin-bottom: 10px; padding: 10px; background: ${finalCorrect ? '#d1fae5' : '#fee2e2'}; border-radius: 8px;">
-                    <strong>${finalCorrect ? '✅' : '❌'} Evaluación Final</strong><br>
-                    Tu respuesta: <span style="text-transform: uppercase;">${currentEvaluation.finalRisk}</span><br>
-                    ${!finalCorrect ? `Respuesta correcta: <span style="text-transform: uppercase; color: #ef4444;">${client.correctRisk}</span>` : ''}
-                </div>
-            `;
-            feedback += '</div>';
+            // Guardar resultados para marketing
+            updateMarketingData();
+        }
 
-            // Explicación del caso
-            feedback += `
-                <div style="margin-top: 20px; padding: 15px; background: #f3f4f6; border-radius: 10px;">
-                    <h4 style="color: #1f2937; margin-bottom: 10px;">💡 Explicación del Caso</h4>
-                    <p style="color: #4b5563; line-height: 1.6;">
-                        ${getClientExplanation(client)}
-                    </p>
-                </div>
-            `;
-
-            document.getElementById('feedback').innerHTML = feedback;
-
-            // Mostrar logros si hay nuevos
-            const achievementsDiv = document.getElementById('achievements');
-            if (gameState.achievements.length > 0) {
-                achievementsDiv.innerHTML = '<h3 style="margin-top: 20px;">🏅 Logros Desbloqueados</h3>';
-                gameState.achievements.forEach(achievement => {
-                    achievementsDiv.innerHTML += `<span class="achievement">${achievement}</span>`;
+        // Actualizar datos de marketing
+        function updateMarketingData() {
+            let marketingData = JSON.parse(localStorage.getItem('kycMarketingData') || '[]');
+            const userIndex = marketingData.findIndex(u => u.email === appState.user.email);
+            
+            if (userIndex !== -1) {
+                marketingData[userIndex].exercises.push({
+                    date: new Date().toISOString(),
+                    score: appState.finalScore,
+                    percentage: appState.percentage,
+                    timeSpent: document.getElementById('timerDisplay').textContent
                 });
+                localStorage.setItem('kycMarketingData', JSON.stringify(marketingData));
             }
-
-            modal.classList.add('active');
         }
 
-        // Obtener explicación del cliente
-        function getClientExplanation(client) {
-            const explanations = {
-                1: "Hans Müller presenta un riesgo ALTO debido a múltiples factores: transferencias internacionales de gran volumen desde Suiza (paraíso fiscal), conexiones familiares con PEPs (Exministro de Finanzas), y la naturaleza de sus operaciones comerciales internacionales. Requiere debida diligencia reforzada y monitoreo continuo.",
-                2: "Juana Pérez Luna es de riesgo ALTO. Aunque declara ser ama de casa sin actividad económica, recibe transferencias significativas y su esposo estuvo involucrado en escándalos de corrupción. Existe un posible intento de ocultar el origen de los fondos.",
-                3: "Emilio Torres es de riesgo ALTO. Como influencer, recibe grandes cantidades en efectivo sin justificación clara del origen. La naturaleza de su actividad económica dificulta la verificación del origen lícito de los fondos.",
-                4: "Pedro Hernández presenta riesgo MEDIO. Como agricultor en zona rural, el manejo de efectivo es comprensible por la falta de acceso bancario, pero la falta de documentación formal (RFC/CURP) dificulta la verificación.",
-                5: "Mónica Gómez es de riesgo BAJO. Abogada corporativa con ingresos justificados y verificables, sin conexiones PEP y operaciones coherentes con su perfil profesional.",
-                6: "Luis Ramos tiene riesgo MEDIO. Como comerciante informal, el alto manejo de efectivo es esperado, pero los depósitos diarios de $5,000 requieren monitoreo para detectar posible estructuración.",
-                7: "José Ríos es de riesgo ALTO. Exfuncionario con movimientos desde paraísos fiscales y familiares relacionados con contratos públicos. Alta probabilidad de lavado de activos provenientes de corrupción.",
-                8: "Ana Robles presenta riesgo MEDIO. Aunque es médico especialista, hay irregularidades en los pagos en efectivo que no concuerdan completamente con su perfil profesional.",
-                9: "Yu Chen es de riesgo BAJO. Estudiante con fondos verificables provenientes de beca gubernamental. El riesgo geográfico es moderado pero mitigado por la naturaleza institucional de los fondos.",
-                10: "Daniel Cruz tiene riesgo MEDIO. La falta de registro formal de su empresa y las inversiones en criptomonedas presentan desafíos para la trazabilidad de fondos.",
-                11: "Antonio Rivera es de riesgo BAJO. Pensionado con ingresos estables y verificables del gobierno, sin señales de alerta.",
-                12: "Laura Méndez es de riesgo BAJO. Modelo con alta visibilidad pública, contratos verificables y operaciones coherentes con su actividad profesional."
-            };
-
-            return explanations[client.id] || "Evaluación basada en los factores de riesgo identificados.";
+        // Imprimir resultados
+        function printResults() {
+            window.print();
         }
 
-        // Verificar logros
-        function checkAchievements() {
-            const newAchievements = [];
-
-            // Primer caso completado
-            if (gameState.completedClients.length === 1) {
-                newAchievements.push('🎯 Primera Evaluación');
-            }
-
-            // 5 casos completados
-            if (gameState.completedClients.length === 5) {
-                newAchievements.push('⭐ Analista en Progreso');
-            }
-
-            // Todos los casos completados
-            if (gameState.completedClients.length === 12) {
-                newAchievements.push('🏆 Experto KYC');
-            }
-
-            // Puntuación perfecta
-            const lastEval = gameState.evaluations[gameState.currentClient.id];
-            if (lastEval && lastEval.score === 100) {
-                newAchievements.push('💯 Evaluación Perfecta');
-            }
-
-            // Racha de 3 evaluaciones correctas
-            const lastThree = gameState.completedClients.slice(-3);
-            if (lastThree.length === 3) {
-                const allGood = lastThree.every(id => gameState.evaluations[id].score >= 80);
-                if (allGood) {
-                    newAchievements.push('🔥 Racha de Excelencia');
-                }
-            }
-
-            gameState.achievements = newAchievements;
-        }
-
-        // Actualizar estadísticas
-        function updateStats() {
-            const completed = gameState.completedClients.length;
-            const total = clients.length;
+        // Repetir ejercicio
+        function repeatExercise() {
+            // Mantener los mismos casos
+            appState.currentCaseIndex = 0;
+            appState.responses = {};
+            appState.results = [];
             
-            document.getElementById('score').innerHTML = gameState.totalScore;
-            document.getElementById('completed').innerHTML = `${completed}/${total}`;
-            
-            // Calcular precisión
-            let accuracy = 0;
-            if (completed > 0) {
-                const avgScore = gameState.totalScore / completed;
-                accuracy = Math.round(avgScore);
-            }
-            document.getElementById('accuracy').innerHTML = accuracy + '%';
-            
-            // Determinar nivel
-            let level = 'Novato';
-            if (gameState.totalScore >= 1000) {
-                level = 'Experto';
-            } else if (gameState.totalScore >= 700) {
-                level = 'Avanzado';
-            } else if (gameState.totalScore >= 400) {
-                level = 'Intermedio';
-            } else if (gameState.totalScore >= 100) {
-                level = 'Principiante';
-            }
-            document.getElementById('level').innerHTML = level;
+            showScreen('evaluationScreen');
+            startTimer();
+            loadCase(0);
         }
 
-        // Cerrar modal
-        function closeModal() {
-            document.getElementById('resultModal').classList.remove('active');
-            
-            // Actualizar lista de clientes
-            renderClientList();
+        // Nuevo ejercicio
+        function newExercise() {
+            showScreen('exerciseScreen');
+            prepareExercise();
         }
 
-        // Restaurar evaluación previa
-        function restoreEvaluation(clientId) {
-            const saved = gameState.evaluations[clientId];
-            if (saved) {
-                currentEvaluation = {
-                    transactional: saved.transactional,
-                    geographic: saved.geographic,
-                    profile: saved.profile,
-                    pep: saved.pep,
-                    finalRisk: saved.finalRisk,
-                    justifications: saved.justifications
-                };
-
-                // Restaurar UI
-                // TODO: Implementar restauración visual
-            }
-        }
-
-        // Inicializar al cargar la página
-        window.onload = init;
-        
-        // Finalizar SCORM al cerrar
-        window.addEventListener('beforeunload', function() {
-            if (typeof SCORM_API !== 'undefined') {
-                SCORM_API.finish();
-            }
-        });
+        // Inicialización
+        window.onload = function() {
+            showScreen('registrationScreen');
+        };
     </script>
 </body>
 </html>
+
