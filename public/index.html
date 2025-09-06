@@ -1,519 +1,360 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <title>Módulo de Evaluación de Riesgos KYC/AML</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light dark" />
-  <style>
-    :root{
-      --bg1:#0f172a; --bg2:#111827; --card:#0b1220;
-      --ink:#e5e7eb; --muted:#9ca3af; --primary:#10b981; --accent:#3b82f6;
-      --warn:#f59e0b; --danger:#ef4444; --ok:#22c55e; --ring:#334155;
-    }
-    html,body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:
-      radial-gradient(1200px 600px at 10% -10%, #172554 0%, transparent 60%),
-      radial-gradient(1200px 600px at 110% -10%, #0f766e 0%, transparent 60%),
-      linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--ink);}
-    .container{max-width:1100px;margin:auto;padding:24px;}
-    .title{ text-align:center;margin:10px 0 22px }
-    .title h1{font-size:clamp(22px,3vw,36px);margin:0}
-    .grid{display:grid;gap:16px}
-    @media(min-width:900px){.grid-2{grid-template-columns:1fr 1fr}}
-    .card{
-      background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
-      border:1px solid var(--ring); border-radius:16px; padding:16px 18px; box-shadow:0 8px 24px rgba(0,0,0,.2)
-    }
-    .section-title{display:flex;align-items:center;gap:8px;margin:6px 0 12px}
-    .section-title h2{font-size:18px;margin:0}
-    label{display:block;margin:10px 0 6px;color:var(--muted);font-size:14px}
-    input[type=text], input[type=number], select, textarea{
-      width:100%; background:#0b1220; color:var(--ink); border:1px solid #223; border-radius:10px;
-      padding:10px 12px; outline:none; transition:.2s; box-sizing:border-box
-    }
-    input:focus, select:focus, textarea:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,.25)}
-    textarea{min-height:84px; resize:vertical}
-    .row{display:grid;grid-template-columns:1fr 1fr; gap:12px}
-    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr; gap:12px}
-    .pill{display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid var(--ring);font-size:12px;color:var(--muted)}
-    .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
-    button,.btn{
-      background:linear-gradient(135deg,#0ea5e9,#2563eb); color:#fff; border:none; padding:12px 16px;
-      border-radius:12px; font-weight:700; cursor:pointer; box-shadow:0 10px 24px rgba(37,99,235,.25); transition:.15s
-    }
-    button:hover{transform:translateY(-1px)}
-    .btn-ghost{background:transparent;border:1px solid var(--ring); color:var(--ink)}
-    .btn-success{background:linear-gradient(135deg,#10b981,#059669)}
-    .btn-warn{background:linear-gradient(135deg,#f59e0b,#d97706)}
-    .btn-danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
-    .scorebox{
-      display:flex; align-items:center; gap:16px; background:#0b1220; border:1px solid var(--ring);
-      border-radius:14px; padding:12px 14px; margin-top:10px
-    }
-    .meter{height:10px; flex:1; background:#111827; border-radius:8px; overflow:hidden; border:1px solid #223}
-    .meter > i{display:block;height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444)}
-    .badge{font-size:12px;padding:6px 10px;border-radius:10px;background:#111827;border:1px solid var(--ring)}
-    /* Ficha policiaca */
-    .ficha{
-      display:grid; gap:14px; grid-template-columns:120px 1fr; align-items:start
-    }
-    .foto-wrap{
-      aspect-ratio:3/4; background:#0b1220; border:2px solid #999; box-shadow:inset 0 0 0 6px #222;
-      border-radius:6px; overflow:hidden; display:flex; align-items:center; justify-content:center; position:relative
-    }
-    .foto-wrap img{width:100%; height:100%; object-fit:cover}
-    .marcas{position:absolute; inset:8px; border:1px dashed #888; pointer-events:none}
-    .watermark{position:absolute; bottom:6px; right:6px; font-size:10px; color:#9ca3af; background:#0b1220a6; padding:2px 6px; border-radius:6px}
-    .table{width:100%; border-collapse:collapse; overflow:hidden; border-radius:8px; border:1px solid var(--ring)}
-    .table th,.table td{border-bottom:1px solid var(--ring); padding:8px 10px; text-align:left; font-size:14px}
-    .table th{background:#0b1220; color:#cbd5e1}
-    .right{text-align:right}
-    .hide-print{ }
-    @media print{
-      .hide-print{display:none!important;}
-      body{background:#fff; color:#000}
-      .card{border:1px solid #777; box-shadow:none}
-      .table th,.table td{border-color:#777}
-    }
-    .small{font-size:12px;color:var(--muted)}
-  </style>
+<meta charset="utf-8">
+<title>Simulador KYC – Perfiles y Evaluación</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{--bg:#0f172a;--card:#0b1220;--ink:#e5e7eb;--muted:#94a3b8;--ring:#243047;--pri:#10b981;--acc:#3b82f6;--warn:#f59e0b;--bad:#ef4444}
+  html,body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:linear-gradient(135deg,#0f172a,#111827);color:var(--ink)}
+  .container{max-width:1100px;margin:auto;padding:20px}
+  h1{font-size:clamp(22px,3.5vw,38px);margin:0 0 6px}
+  .muted{color:var(--muted)}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.03));border:1px solid var(--ring);border-radius:16px;padding:16px 18px;box-shadow:0 8px 24px rgba(0,0,0,.25);margin:12px 0}
+  label{display:block;margin:10px 0 6px;color:var(--muted);font-size:14px}
+  input,select,textarea{width:100%;background:#0b1220;color:var(--ink);border:1px solid #223;border-radius:10px;padding:10px 12px;outline:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(59,130,246,.25)}
+  .grid{display:grid;gap:12px}
+  @media(min-width:880px){.grid-2{grid-template-columns:1fr 1fr}}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  button,.btn{background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;border:none;padding:12px 16px;border-radius:12px;font-weight:700;cursor:pointer}
+  .btn-ghost{background:transparent;border:1px solid var(--ring)}
+  .btn-ok{background:linear-gradient(135deg,#10b981,#059669)}
+  .btn-warn{background:linear-gradient(135deg,#f59e0b,#d97706)}
+  .btn-bad{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+  .ficha{display:grid;grid-template-columns:120px 1fr;gap:14px}
+  .foto{width:120px;height:160px;border:2px solid #9aa;box-shadow:inset 0 0 0 6px #222;border-radius:6px;overflow:hidden}
+  .foto img{width:100%;height:100%;object-fit:cover}
+  .pill{display:inline-block;padding:4px 10px;border:1px solid var(--ring);border-radius:999px;color:var(--muted);font-size:12px}
+  .meter{height:10px;background:#0b1220;border:1px solid var(--ring);border-radius:8px;overflow:hidden}
+  .meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444)}
+  .small{font-size:12px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;border:1px solid var(--ring);border-radius:8px;overflow:hidden}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--ring);text-align:left}
+  th{background:#0b1220}
+  .right{text-align:right}
+  @media print{.no-print{display:none!important}; body{background:#fff;color:#000} .card{border:1px solid #777;box-shadow:none}}
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="title">
-      <h1>Evaluación de Riesgos KYC/AML – Práctica</h1>
-      <div class="small">Módulo demostrativo para sitio institucional y previsualización del curso (Hotmart)</div>
-    </div>
+<div class="container">
+  <h1>Simulador KYC – 12 Perfiles</h1>
+  <div class="muted">El sistema registra leads, selecciona 3 perfiles al azar, califica y permite imprimir el reporte.</div>
 
-    <!-- Ficha policiaca del sujeto -->
-    <div class="card">
-      <div class="section-title">
-        <span class="pill">Identificación</span>
-        <h2>Ficha del Sujeto (formato “ficha policiaca”)</h2>
-      </div>
-      <div class="grid grid-2">
-        <div class="ficha">
-          <div class="foto-wrap" id="fotoBox" aria-label="Fotografía del sujeto">
-            <img id="fotoPreview" alt="Foto del sujeto (cargue una imagen)" />
-            <div class="marcas"></div>
-            <div class="watermark">ID Verif.</div>
-          </div>
-          <div>
-            <label for="foto">Fotografía (frontal, sin lentes oscuros)</label>
-            <input id="foto" type="file" accept="image/*" />
-            <div class="small">Se incrusta en el reporte imprimible.</div>
-          </div>
-        </div>
-        <div class="grid">
-          <div class="row">
-            <div>
-              <label>Nombre(s)</label>
-              <input id="nombre" type="text" placeholder="Nombre(s) del sujeto" />
-            </div>
-            <div>
-              <label>Apellidos</label>
-              <input id="apellidos" type="text" placeholder="Apellidos del sujeto" />
-            </div>
-          </div>
-          <div class="row">
-            <div>
-              <label>Nacionalidad</label>
-              <input id="nacionalidad" type="text" placeholder="p. ej., Mexicana" />
-            </div>
-            <div>
-              <label>CURP/RFC/ID (opcional)</label>
-              <input id="identif" type="text" placeholder="Clave o identificación" />
-            </div>
-          </div>
-          <div>
-            <label>Domicilio</label>
-            <input id="domicilio" type="text" placeholder="Calle, No., Col., Municipio, Estado, CP" />
-          </div>
-          <div class="row">
-            <div>
-              <label>Ocupación/Actividad</label>
-              <input id="actividad" type="text" placeholder="p. ej., Abogada corporativa" />
-            </div>
-            <div>
-              <label>Fecha de evaluación</label>
-              <input id="fechaEval" type="date" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Evaluación por factores -->
+  <!-- Registro de lead -->
+  <div class="card" id="leadCard">
+    <span class="pill">Registro</span>
+    <h2>Datos de acceso (Lead)</h2>
     <div class="grid grid-2">
-      <!-- Actividad -->
-      <div class="card" id="sec-actividad">
-        <div class="section-title"><span class="pill">Factor 1</span><h2>Actividad</h2></div>
-        <label>Nivel de riesgo por actividad (sector)</label>
-        <select id="riesgoActividad">
-          <option value="10">Muy bajo – empleo formal con nómina</option>
-          <option value="25">Bajo – profesional independiente con facturación</option>
-          <option value="50">Medio – comercio al menudeo / influencer / efectivo moderado</option>
-          <option value="75">Alto – giros vulnerables/efectivo alto</option>
-          <option value="90">Muy alto – giro altamente expuesto (ej. casinos, joyería, cripto informal)</option>
+      <div>
+        <label>Nombre completo</label>
+        <input id="leadNombre" placeholder="Tu nombre y apellidos" />
+      </div>
+      <div>
+        <label>Correo</label>
+        <input id="leadCorreo" type="email" placeholder="tucorreo@dominio.com" />
+      </div>
+      <div>
+        <label>Celular</label>
+        <input id="leadCel" type="tel" placeholder="+52 55 0000 0000" />
+      </div>
+      <div>
+        <label>Consentimiento</label>
+        <select id="leadConsent">
+          <option value="Sí">Sí, acepto contacto para información del curso</option>
+          <option value="No">No, solo quiero probar el simulador</option>
         </select>
-        <label>Justificación (≥ 50 caracteres)</label>
-        <textarea id="justActividad" placeholder="Describe por qué asignaste este nivel (fuentes, documentación, señales, etc.)"></textarea>
-        <div class="scorebox"><span class="badge">Puntaje factor</span><div class="meter"><i id="mActividad"></i></div><strong id="sActividad">0</strong></div>
-      </div>
-
-      <!-- Transaccionalidad -->
-      <div class="card" id="sec-transaccionalidad">
-        <div class="section-title"><span class="pill">Factor 2</span><h2>Transaccionalidad</h2></div>
-        <div class="row-3">
-          <div>
-            <label>Volumen mensual (MXN)</label>
-            <input id="volumen" type="number" min="0" step="0.01" placeholder="ej. 50000" />
-          </div>
-          <div>
-            <label>Frecuencia</label>
-            <select id="frecuencia">
-              <option value="10">Baja (≤ mensual)</option>
-              <option value="30">Media (semanal)</option>
-              <option value="60">Alta (diaria/varias al día)</option>
-            </select>
-          </div>
-          <div>
-            <label>Manejo de efectivo</label>
-            <select id="efectivo">
-              <option value="10">Bajo</option>
-              <option value="40">Medio</option>
-              <option value="75">Alto</option>
-            </select>
-          </div>
-        </div>
-        <label>Justificación (≥ 50 caracteres)</label>
-        <textarea id="justTrans" placeholder="Explica señales (patrones, desvíos frente al perfil económico, etc.)"></textarea>
-        <div class="scorebox"><span class="badge">Puntaje factor</span><div class="meter"><i id="mTrans"></i></div><strong id="sTrans">0</strong></div>
-      </div>
-
-      <!-- Instrumento Monetario -->
-      <div class="card" id="sec-instrumento">
-        <div class="section-title"><span class="pill">Factor 3</span><h2>Instrumento monetario</h2></div>
-        <label>Principal instrumento</label>
-        <select id="instrumento">
-          <option value="15">Transferencia bancaria nacional</option>
-          <option value="30">Transferencia internacional</option>
-          <option value="55">Efectivo</option>
-          <option value="70">Criptoactivos regulados</option>
-          <option value="85">Criptoactivos P2P / no regulados</option>
-          <option value="45">Cheques / giros / remesas</option>
-        </select>
-        <label>Justificación (≥ 50 caracteres)</label>
-        <textarea id="justInstrumento" placeholder="Expón por qué el instrumento eleva o reduce el riesgo para este caso"></textarea>
-        <div class="scorebox"><span class="badge">Puntaje factor</span><div class="meter"><i id="mInst"></i></div><strong id="sInst">0</strong></div>
-      </div>
-
-      <!-- Geografía -->
-      <div class="card" id="sec-geo">
-        <div class="section-title"><span class="pill">Factor 4</span><h2>Riesgo geográfico</h2></div>
-        <div class="row">
-          <div>
-            <label>Ámbito</label>
-            <select id="ambito">
-              <option value="mx">México (Estado)</option>
-              <option value="pais">País</option>
-            </select>
-          </div>
-          <div>
-            <label>Estado o País</label>
-            <select id="geo" aria-label="Estado de la República o País"></select>
-          </div>
-        </div>
-        <label>Justificación (≥ 50 caracteres)</label>
-        <textarea id="justGeo" placeholder="Considera índices de criminalidad, corrupción, controles, listas, etc."></textarea>
-        <div class="scorebox"><span class="badge">Puntaje factor</span><div class="meter"><i id="mGeo"></i></div><strong id="sGeo">0</strong></div>
-      </div>
-
-      <!-- PEP -->
-      <div class="card" id="sec-pep">
-        <div class="section-title"><span class="pill">Factor 5</span><h2>Relación con PEP</h2></div>
-        <label>Exposición</label>
-        <select id="pep">
-          <option value="10">Sin relación PEP conocida</option>
-          <option value="35">Familiar/Asociado de PEP de bajo nivel</option>
-          <option value="60">Familiar/Asociado de PEP relevante</option>
-          <option value="85">PEP directo (alto rango o internacional)</option>
-        </select>
-        <label>Justificación (≥ 50 caracteres)</label>
-        <textarea id="justPEP" placeholder="Detalles de la relación, cargo, periodo, controles mitigantes, etc."></textarea>
-        <div class="scorebox"><span class="badge">Puntaje factor</span><div class="meter"><i id="mPEP"></i></div><strong id="sPEP">0</strong></div>
-      </div>
-
-      <!-- Delitos / Incumplimientos -->
-      <div class="card" id="sec-delitos">
-        <div class="section-title"><span class="pill">Factor 6</span><h2>Delitos o incumplimientos fiscales</h2></div>
-        <label>Historial</label>
-        <select id="delitos">
-          <option value="10">Sin antecedentes</option>
-          <option value="45">Incumplimientos administrativos menores</option>
-          <option value="70">Sanciones fiscales significativas</option>
-          <option value="90">Antecedentes penales relevantes</option>
-        </select>
-        <label>Justificación (≥ 50 caracteres)</label>
-        <textarea id="justDelitos" placeholder="Describe hallazgos, fuentes, fechas, situación jurídica, etc."></textarea>
-        <div class="scorebox"><span class="badge">Puntaje factor</span><div class="meter"><i id="mDel"></i></div><strong id="sDel">0</strong></div>
       </div>
     </div>
+    <div class="btns no-print">
+      <button class="btn-ok" id="btnIniciar">Iniciar simulación</button>
+      <button class="btn-ghost" id="btnLeadsCSV">Descargar leads CSV</button>
+    </div>
+    <div class="small">Se guarda en tu navegador; puedes descargar CSV y subirlo a tu CRM/Hotmart.</div>
+  </div>
 
-    <!-- Resultado Global -->
+  <!-- Contenedor de perfiles en evaluación -->
+  <div id="evalWrap" style="display:none">
     <div class="card">
-      <div class="section-title"><span class="pill">Resultado</span><h2>Riesgo Global</h2></div>
-      <div class="grid grid-2">
-        <div>
-          <table class="table" aria-label="Resumen de puntajes por factor">
-            <thead><tr><th>Factor</th><th class="right">Puntaje (0-100)</th></tr></thead>
-            <tbody>
-              <tr><td>Actividad</td><td class="right" id="rAct">0</td></tr>
-              <tr><td>Transaccionalidad</td><td class="right" id="rTra">0</td></tr>
-              <tr><td>Instrumento monetario</td><td class="right" id="rIns">0</td></tr>
-              <tr><td>Geografía</td><td class="right" id="rGeo">0</td></tr>
-              <tr><td>Relación con PEP</td><td class="right" id="rPEP">0</td></tr>
-              <tr><td>Delitos/Incumplimientos</td><td class="right" id="rDel">0</td></tr>
-            </tbody>
-            <tfoot>
-              <tr><th>Puntaje global ponderado</th><th class="right" id="rGlobal">0</th></tr>
-            </tfoot>
-          </table>
-          <div class="scorebox">
-            <span class="badge" id="nivelBadge">Nivel —</span>
-            <div class="meter"><i id="mGlobal"></i></div>
-            <strong id="nivelTxt">—</strong>
-          </div>
-          <div class="small" style="margin-top:8px">
-            Ponderaciones: Actividad 20%, Transaccionalidad 25%, Instrumento 15%, Geografía 15%, PEP 15%, Delitos 10%.
-          </div>
-        </div>
-        <div>
-          <label for="comentarios">Conclusión del analista (≥ 80 caracteres)</label>
-          <textarea id="comentarios" placeholder="Sintetiza por qué el sujeto se clasifica en este nivel y qué mitigantes aplicar."></textarea>
-          <div class="btns">
-            <button class="btn-success hide-print" id="btnCalcular">Calcular riesgo</button>
-            <button class="btn-warn hide-print" id="btnValidar">Validar justificaciones</button>
-            <button class="btn hide-print" id="btnImprimir">Imprimir / PDF</button>
-            <button class="btn-ghost hide-print" id="btnExport">Exportar JSON</button>
-            <a class="btn-ghost hide-print" id="dlJson" download="evaluacion_kyc.json" style="display:none">Descargar JSON</a>
-          </div>
-        </div>
-      </div>
+      <span class="pill">Evaluación</span>
+      <h2 id="tituloEval">Perfiles a evaluar (3 de 12, seleccionados al azar)</h2>
+      <div class="small">Asigna puntaje de riesgo 0–100 por factor y escribe una justificación (≥ 50 caracteres). El sistema propone escalas base.</div>
     </div>
 
-    <div class="small" style="text-align:center;margin:18px 0">
-      Demo educativo de prácticas KYC/PLD. Este material es orientativo y debe adaptarse a la normativa y listas aplicables vigentes.
+    <div id="perfilesContainer"></div>
+
+    <div class="card">
+      <span class="pill">Resultado</span>
+      <h2>Calificación final</h2>
+      <table>
+        <thead><tr><th>Perfil</th><th class="right">Puntaje Global (0–100)</th><th>Nivel</th></tr></thead>
+        <tbody id="tablaResultados"></tbody>
+        <tfoot>
+          <tr><th>Promedio final</th><th class="right" id="promFinal">0</th><th id="nivelFinal">—</th></tr>
+        </tfoot>
+      </table>
+      <div class="btns no-print">
+        <button class="btn-warn" id="btnCalcular">Calcular</button>
+        <button class="btn" id="btnImprimir">Imprimir / PDF</button>
+        <button class="btn-ghost" id="btnExportJSON">Exportar JSON</button>
+        <a id="dlJSON" class="btn-ghost" style="display:none" download="reporte_simulacion.json">Descargar JSON</a>
+      </div>
     </div>
   </div>
 
-  <script>
-    // ======== Tablas base de riesgo geográfico (editable) ========
-    const RISK_TABLES = {
-      mx: {
-        "Aguascalientes": 35, "Baja California": 65, "Baja California Sur": 40, "Campeche": 35,
-        "Chiapas": 55, "Chihuahua": 60, "Ciudad de México": 55, "Coahuila": 45, "Colima": 70,
-        "Durango": 55, "Estado de México": 65, "Guanajuato": 65, "Guerrero": 75, "Hidalgo": 40,
-        "Jalisco": 60, "Michoacán": 70, "Morelos": 55, "Nayarit": 45, "Nuevo León": 50,
-        "Oaxaca": 50, "Puebla": 50, "Querétaro": 40, "Quintana Roo": 55, "San Luis Potosí": 45,
-        "Sinaloa": 70, "Sonora": 55, "Tabasco": 55, "Tamaulipas": 70, "Tlaxcala": 35,
-        "Veracruz": 60, "Yucatán": 30, "Zacatecas": 65
-      },
-      pais: {
-        "México": 55, "Estados Unidos": 50, "Canadá": 35, "Alemania": 30, "Suiza": 40,
-        "China": 60, "España": 35, "Reino Unido": 35, "Panamá": 65, "Islas Vírgenes": 80,
-        "Bélgica": 30, "Brasil": 55, "Argentina": 50, "Guatemala": 60, "Colombia": 65, "Perú": 55
-      }
-    };
+  <div class="small" style="text-align:center;margin:16px 0">
+    Perfiles extraídos del documento proporcionado por el cliente (uso didáctico). 
+  </div>
+</div>
 
-    // ======== Utilidades ========
-    const $ = (id)=>document.getElementById(id);
-    const byId = $;
+<script>
+/* =======================
+   Datos de los 12 perfiles
+   Las fotos deben estar en ../imagenes con estos nombres exactos.
+   Fuente de descripciones: documento anexo del cliente.
+======================= */
+const PROFILES = [
+  {id:"hans", foto:"../imagenes/Hans_Muller.jpg", nombre:"Hans Müller", direccion:"Av. Reforma 123, CDMX", nacionalidad:"Alemana", ocupacion:"Importador de maquinaria",
+   bullets:[
+    "Transferencia internacional de $500,000 USD desde Suiza, operaciones comerciales regulares",
+    "Volumen: $500,000; Frecuencia: mensual; Manejo de efectivo: bajo",
+    "Transferencias desde cuentas en Suiza",
+    "Pariente en Alemania, Exministro de Finanzas (PEP). Perfil complejo por conexiones internacionales"
+   ]},
+  {id:"juana", foto:"../imagenes/Juana_perez.jpg", nombre:"Juana Pérez Luna", direccion:"Calle Tulipanes 45, Toluca", nacionalidad:"Mexicana", ocupacion:"Ama de casa",
+   bullets:[
+    "Sin actividad económica registrada; operaciones menores por transferencias familiares",
+    "Volumen: $10,000 mensuales; Manejo de efectivo: alto",
+    "Transferencias familiares desde Estados Unidos",
+    "Esposa de empresario involucrado en escándalo de corrupción"
+   ]},
+  {id:"emilio", foto:"../imagenes/Emilio_torres.jpg", nombre:"Emilio Torres Hernández", direccion:"Paseo del Sol 98, Guadalajara", nacionalidad:"Mexicana", ocupacion:"Influencer digital",
+   bullets:[
+    "Depósitos en efectivo por $50,000/mes; ingresos de plataformas digitales",
+    "Frecuencia: semanal; Manejo de efectivo: alto",
+    "Depósitos de seguidores sin justificación clara",
+    "Actividad de alto riesgo por no justificar origen de ingresos"
+   ]},
+  {id:"pedro", foto:"../imagenes/Pedro_hdez.jpg", nombre:"Pedro Hernández Juárez", direccion:"Camino Ejidal s/n, Oaxaca", nacionalidad:"Mexicana", ocupacion:"Agricultor",
+   bullets:[
+    "Solicita microcrédito; operaciones en efectivo por falta de acceso bancario",
+    "Volumen bajo; Manejo de efectivo alto",
+    "No posee RFC ni CURP; transacciones en efectivo",
+    "Ingresos no fácilmente verificables"
+   ]},
+  {id:"monica", foto:"../imagenes/Monica_gomez.jpg", nombre:"Mónica Gómez García", direccion:"Av. Patriotismo 750, CDMX", nacionalidad:"Mexicana", ocupacion:"Abogada corporativa",
+   bullets:[
+    "Solicita banca patrimonial para gestionar su patrimonio",
+    "Frecuencia: mensual; Volumen: $120,000; Manejo de efectivo: bajo",
+    "Depósitos de clientes corporativos",
+    "Familiares con procesos legales (sin PEPs). Riesgo controlado"
+   ]},
+  {id:"luis", foto:"../imagenes/Luis_ramos.jpg", nombre:"Luis Ramos Corona", direccion:"Calle Comercio 12, Iztapalapa", nacionalidad:"Mexicana", ocupacion:"Comerciante informal",
+   bullets:[
+    "Ventas en tianguis; depósitos menores en cuenta bancaria",
+    "Frecuencia: diaria; Volumen bajo; Manejo de efectivo alto",
+    "Depósitos en efectivo de $5,000 diarios",
+    "Origen de fondos incierto por alta informalidad"
+   ]},
+  {id:"jose", foto:"../imagenes/Jose_rios.jpg", nombre:"José Ríos Díaz", direccion:"Priv. Reforma 21, Morelia", nacionalidad:"Mexicana", ocupacion:"Exfuncionario público",
+   bullets:[
+    "Movimientos internacionales; inversión en fondos privados",
+    "Volumen alto; Manejo de efectivo bajo",
+    "Transferencias desde cuentas en paraísos fiscales",
+    "Conexiones con recursos públicos; posible riesgo de LA/FT"
+   ]},
+  {id:"ana", foto:"../imagenes/Ana_robles.jpg", nombre:"Ana Robles Moreno", direccion:"Av. Salud 321, Monterrey", nacionalidad:"Mexicana", ocupacion:"Médico especialista",
+   bullets:[
+    "Solicita crédito automotriz; ingresos por honorarios y nómina",
+    "Frecuencia: mensual; Volumen: $100,000; Manejo de efectivo: bajo",
+    "Ingresos de consultorio y hospitales privados",
+    "Posible irregularidad en pagos en efectivo no acordes a perfil"
+   ]},
+  {id:"yu", foto:"../imagenes/Yu_chen.jpg", nombre:"Yu Chen", direccion:"Residencial UNAM, CDMX", nacionalidad:"China", ocupacion:"Estudiante",
+   bullets:[
+    "Recibe beca del gobierno chino; mantiene cuenta para transferencias",
+    "Frecuencia: mensual; Volumen: $10,000; Manejo de efectivo: bajo",
+    "Transferencias mensuales gubernamentales",
+    "Perfil de bajo riesgo por fondos institucionalizados; sin PEPs"
+   ]},
+  {id:"daniel", foto:"../imagenes/Daniel_cruz.jpg", nombre:"Daniel Cruz Gonzáles", direccion:"Calle Startups 404, Querétaro", nacionalidad:"Mexicana", ocupacion:"Desarrollador Fintech",
+   bullets:[
+    "Solicita cuenta para app financiera; sin RFC",
+    "Frecuencia: mensual; Volumen bajo; Manejo de efectivo bajo",
+    "Inversiones en cripto y tecnología emergente",
+    "Empresa no registrada ante SAT; sin estructura legal aún"
+   ]},
+  {id:"antonio", foto:"../imagenes/Antonio_rivera.jpg", nombre:"Antonio Rivera Marín", direccion:"Madero 200, Mexicali", nacionalidad:"Mexicana", ocupacion:"Pensionado",
+   bullets:[
+    "Recibe pensión mensual; operaciones por $10,000",
+    "Frecuencia: mensual; Manejo de efectivo bajo",
+    "Pensión de gobierno (ingreso estable y verificable)",
+    "Caso de bajo riesgo; sin PEPs"
+   ]},
+  {id:"laura", foto:"../imagenes/Laura_mendez.jpg", nombre:"Laura Méndez", direccion:"Guerrero 900, Monterrey", nacionalidad:"Mexicana", ocupacion:"Modelo de TV",
+   bullets:[
+    "Pagos mensuales por contrato de exclusividad (~$50,000)",
+    "Frecuencia mensual; Manejo de efectivo bajo",
+    "Alta visibilidad en medios",
+    "Pagos por contrato y eventos; sin PEPs"
+   ]}
+];
 
-    function setMeter(meterEl, value){
-      const v = Math.max(0, Math.min(100, Number(value)||0));
-      meterEl.style.width = v + "%";
-    }
-    function setScore(idLabel, idMeter, value){
-      byId(idLabel).textContent = Math.round(value);
-      setMeter(byId(idMeter), value);
-    }
-    function nivelFromScore(score){
-      if(score < 30) return ["Bajo", "#22c55e"];
-      if(score < 55) return ["Medio", "#f59e0b"];
-      if(score < 75) return ["Alto", "#fb923c"];
-      return ["Crítico", "#ef4444"];
-    }
-    function requireText(el, min=50){
-      return (el.value||"").trim().length >= min;
-    }
-    function toast(msg){
-      alert(msg);
-    }
+/* =======================
+   Utilidades y constantes
+======================= */
+const $=id=>document.getElementById(id);
+const choose3 = arr => arr.slice().sort(()=>Math.random()-0.5).slice(0,3);
+const NIVEL = s => s<30?["Bajo","#22c55e"]:s<55?["Medio","#f59e0b"]:s<75?["Alto","#fb923c"]:["Crítico","#ef4444"];
 
-    // ======== Poblar combos de geografía ========
-    function fillGeo(){
-      const amb = byId("ambito").value;
-      const sel = byId("geo");
-      const data = Object.keys(RISK_TABLES[amb]).sort();
-      sel.innerHTML = data.map(x=>`<option value="${x}">${x}</option>`).join("");
-    }
+// Ponderaciones iguales por simplicidad en este simulador (puedes ajustarlas)
+const W = {actividad:.2, trans:.25, inst:.15, geo:.15, pep:.15, delitos:.10};
 
-    // ======== Cargar foto ========
-    byId("foto").addEventListener("change", e=>{
-      const f = e.target.files?.[0];
-      if(!f) return;
-      const reader = new FileReader();
-      reader.onload = ev=>{ byId("fotoPreview").src = ev.target.result; };
-      reader.readAsDataURL(f);
-    });
+/* =======================
+   Registro de leads
+======================= */
+function saveLead(){
+  const lead = {
+    nombre: $('leadNombre').value.trim(),
+    correo: $('leadCorreo').value.trim(),
+    celular: $('leadCel').value.trim(),
+    consentimiento: $('leadConsent').value,
+    ts: new Date().toISOString()
+  };
+  if(!lead.nombre || !lead.correo || !lead.celular){
+    alert("Completa nombre, correo y celular.");
+    return null;
+  }
+  const key="kyc_leads";
+  const arr = JSON.parse(localStorage.getItem(key)||"[]");
+  arr.push(lead);
+  localStorage.setItem(key, JSON.stringify(arr));
+  return lead;
+}
 
-    byId("ambito").addEventListener("change", fillGeo);
-    fillGeo();
+$('btnLeadsCSV').addEventListener('click',()=>{
+  const arr = JSON.parse(localStorage.getItem("kyc_leads")||"[]");
+  const header = ["nombre","correo","celular","consentimiento","ts"];
+  const rows = [header.join(",")].concat(arr.map(o=>header.map(h=>`"${(o[h]||"").replace(/"/g,'""')}"`).join(",")));
+  const blob = new Blob([rows.join("\n")], {type:"text/csv"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download="leads_kyc.csv"; a.click();
+});
 
-    // ======== Cálculo por factor ========
-    function calcActividad(){
-      const val = Number(byId("riesgoActividad").value);
-      setScore("sActividad", "mActividad", val);
-      byId("rAct").textContent = Math.round(val);
-      return val;
-    }
-    function calcTrans(){
-      // Fórmula simple ponderada: volumen normalizado (capar en 1M), + freq + efectivo
-      const vol = Math.min(Number(byId("volumen").value||0), 1_000_000) / 1_000_000; // 0..1
-      const volScore = vol * 100 * 0.50;           // 50% peso
-      const freqScore = Number(byId("frecuencia").value) * 0.30; // 30% peso (input ya ~0..100)
-      const efScore = Number(byId("efectivo").value) * 0.20;     // 20% peso
-      const total = volScore + freqScore + efScore;
-      setScore("sTrans", "mTrans", total);
-      byId("rTra").textContent = Math.round(total);
-      return total;
-    }
-    function calcInst(){
-      const val = Number(byId("instrumento").value);
-      setScore("sInst", "mInst", val);
-      byId("rIns").textContent = Math.round(val);
-      return val;
-    }
-    function calcGeo(){
-      const amb = byId("ambito").value;
-      const sel = byId("geo").value;
-      const val = RISK_TABLES[amb][sel] ?? 50;
-      setScore("sGeo", "mGeo", val);
-      byId("rGeo").textContent = Math.round(val);
-      return val;
-    }
-    function calcPEP(){
-      const val = Number(byId("pep").value);
-      setScore("sPEP", "mPEP", val);
-      byId("rPEP").textContent = Math.round(val);
-      return val;
-    }
-    function calcDelitos(){
-      const val = Number(byId("delitos").value);
-      setScore("sDel", "mDel", val);
-      byId("rDel").textContent = Math.round(val);
-      return val;
-    }
+/* =======================
+   Render de evaluación
+======================= */
+function perfilCard(p, idx){
+  const id = `pf${idx}`;
+  return `
+  <div class="card" id="${id}">
+    <div class="ficha">
+      <div class="foto"><img src="${p.foto}" alt="Foto de ${p.nombre}"></div>
+      <div>
+        <span class="pill">Perfil</span>
+        <h3 style="margin:6px 0 6px">${p.nombre}</h3>
+        <div class="small">${p.ocupacion} • ${p.nacionalidad} • ${p.direccion}</div>
+        <ul style="margin:8px 0 0 18px">
+          ${p.bullets.map(b=>`<li>${b}</li>`).join("")}
+        </ul>
+      </div>
+    </div>
 
-    // ======== Global ========
-    function calcGlobal(){
-      const a = calcActividad();
-      const t = calcTrans();
-      const i = calcInst();
-      const g = calcGeo();
-      const p = calcPEP();
-      const d = calcDelitos();
-      const global = a*0.20 + t*0.25 + i*0.15 + g*0.15 + p*0.15 + d*0.10;
-      const [nivel, color] = nivelFromScore(global);
-      byId("rGlobal").textContent = Math.round(global);
-      setMeter(byId("mGlobal"), global);
-      const badge = byId("nivelBadge");
-      badge.textContent = `Nivel ${nivel}`;
-      badge.style.borderColor = color; badge.style.color = color;
-      byId("nivelTxt").textContent = `${nivel}`;
-      return global;
-    }
+    <div class="grid grid-2" style="margin-top:12px">
+      <div>
+        <label>Actividad (0–100)</label><input type="number" min="0" max="100" id="${id}_actividad" value="50">
+        <label>Transaccionalidad (0–100)</label><input type="number" min="0" max="100" id="${id}_trans" value="50">
+        <label>Instrumento monetario (0–100)</label><input type="number" min="0" max="100" id="${id}_inst" value="50">
+      </div>
+      <div>
+        <label>Geografía (0–100)</label><input type="number" min="0" max="100" id="${id}_geo" value="50">
+        <label>Relación con PEP (0–100)</label><input type="number" min="0" max="100" id="${id}_pep" value="50">
+        <label>Delitos/Incumplimientos (0–100)</label><input type="number" min="0" max="100" id="${id}_del" value="50">
+      </div>
+    </div>
+    <label>Justificación (≥ 50 caracteres)</label>
+    <textarea id="${id}_just" placeholder="Explica por qué asignaste estos puntajes. Considera indicios, documentación y señales."></textarea>
 
-    // ======== Validaciones ========
-    function validateAll(show=true){
-      const fields = [
-        ["justActividad", 50, "Actividad"],
-        ["justTrans", 50, "Transaccionalidad"],
-        ["justInstrumento", 50, "Instrumento monetario"],
-        ["justGeo", 50, "Geografía"],
-        ["justPEP", 50, "PEP"],
-        ["justDelitos", 50, "Delitos/Incumplimientos"],
-      ];
-      const fails = fields.filter(([id,min]) => !requireText(byId(id), min));
-      if(show){
-        if(fails.length){
-          const list = fails.map(x => "• "+x[2]).join("\n");
-          toast("Faltan justificaciones (≥ 50 caracteres) en:\n\n"+list);
-        }else{
-          toast("Justificaciones completas ✅");
-        }
-      }
-      return fails.length === 0;
-    }
+    <div class="grid grid-2" style="margin-top:10px">
+      <div class="meter"><i id="${id}_bar" style="width:0%"></i></div>
+      <div style="text-align:right"><strong id="${id}_score">0</strong> / <span id="${id}_nivel">—</span></div>
+    </div>
+  </div>`;
+}
 
-    // ======== Exportación JSON ========
-    function exportJSON(){
-      const payload = {
-        sujeto: {
-          nombre: byId("nombre").value.trim(),
-          apellidos: byId("apellidos").value.trim(),
-          nacionalidad: byId("nacionalidad").value.trim(),
-          identificacion: byId("identif").value.trim(),
-          domicilio: byId("domicilio").value.trim(),
-          actividad: byId("actividad").value.trim(),
-          fechaEvaluacion: byId("fechaEval").value
-        },
-        factores: {
-          actividad: {score: Number(byId("rAct").textContent), just: byId("justActividad").value},
-          transaccionalidad: {score: Number(byId("rTra").textContent), just: byId("justTrans").value},
-          instrumento: {score: Number(byId("rIns").textContent), just: byId("justInstrumento").value},
-          geografia: {
-            ambito: byId("ambito").value, zona: byId("geo").value,
-            score: Number(byId("rGeo").textContent), just: byId("justGeo").value
-          },
-          pep: {score: Number(byId("rPEP").textContent), just: byId("justPEP").value},
-          delitos: {score: Number(byId("rDel").textContent), just: byId("justDelitos").value}
-        },
-        resultado: {
-          global: Number(byId("rGlobal").textContent),
-          nivel: byId("nivelTxt").textContent,
-          comentarios: byId("comentarios").value
-        },
-        version: "1.0.0"
-      };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = byId("dlJson");
-      a.href = url; a.style.display = "inline-block";
-    }
+let seleccion = [];
+function renderEvaluacion(){
+  const cont = $('perfilesContainer');
+  cont.innerHTML = seleccion.map((p,i)=>perfilCard(p,i)).join("");
+}
 
-    // ======== Botones ========
-    byId("btnCalcular").addEventListener("click", ()=>{
-      if(!validateAll(false)){
-        toast("Sugerencia: completa todas las justificaciones para robustecer el expediente.");
-      }
-      const g = calcGlobal();
-      toast(`Puntaje global: ${Math.round(g)} – Nivel ${byId("nivelTxt").textContent}`);
-    });
-    byId("btnValidar").addEventListener("click", ()=>validateAll(true));
-    byId("btnImprimir").addEventListener("click", ()=>{
-      calcGlobal();
-      window.print();
-    });
-    byId("btnExport").addEventListener("click", ()=>{
-      calcGlobal();
-      exportJSON();
-    });
+/* =======================
+   Cálculo y reporte
+======================= */
+function calcPerfil(i){
+  const id = `pf${i}`;
+  const g = n=>Math.max(0, Math.min(100, Number($(id+"_"+n).value||0)));
+  const just = $(id+"_just").value.trim();
+  const okJust = just.length>=50;
+  if(!okJust){ $(id+"_just").style.borderColor = "#f59e0b"; }
 
-    // Cálculo inicial
-    calcGlobal();
-  </script>
+  const s = {
+    actividad:g("actividad"), trans:g("trans"), inst:g("inst"),
+    geo:g("geo"), pep:g("pep"), delitos:g("del")
+  };
+  const global = s.actividad*W.actividad + s.trans*W.trans + s.inst*W.inst + s.geo*W.geo + s.pep*W.pep + s.delitos*W.delitos;
+  const [nivel,color]=NIVEL(global);
+  $(id+"_bar").style.width = Math.round(global)+"%";
+  $(id+"_score").textContent = Math.round(global);
+  $(id+"_nivel").textContent = nivel;
+  return {score:Math.round(global), nivel, color, justificacion:just, factores:s, okJust};
+}
+
+function calcularTodo(){
+  const resultados = seleccion.map((_,i)=>calcPerfil(i));
+  const tbody = $('tablaResultados');
+  tbody.innerHTML = seleccion.map((p,i)=>`<tr><td>${p.nombre}</td><td class="right">${resultados[i].score}</td><td>${resultados[i].nivel}</td></tr>`).join("");
+  const prom = Math.round(resultados.reduce((a,b)=>a+b.score,0)/resultados.length);
+  const [nivel,color]=NIVEL(prom);
+  $('promFinal').textContent = prom;
+  $('nivelFinal').textContent = nivel;
+  const allJust = resultados.every(r=>r.okJust);
+  if(!allJust){ alert("Hay justificaciones con menos de 50 caracteres. Corrige para un expediente completo."); }
+  return {prom, nivel, resultados};
+}
+
+/* =======================
+   Export / Print
+======================= */
+$('btnImprimir').addEventListener('click',()=>{ calcularTodo(); window.print(); });
+
+$('btnExportJSON').addEventListener('click',()=>{
+  const lead = JSON.parse(localStorage.getItem("last_lead")||"{}");
+  const {prom, nivel, resultados} = calcularTodo();
+  const payload = {
+    lead, seleccion,
+    resultados,
+    promedio_final: prom, nivel_final: nivel,
+    timestamp: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a=$('dlJSON'); a.href=url; a.style.display="inline-block";
+});
+
+/* =======================
+   Inicio
+======================= */
+$('btnIniciar').addEventListener('click',()=>{
+  const lead = saveLead(); if(!lead) return;
+  localStorage.setItem("last_lead", JSON.stringify(lead));
+  seleccion = choose3(PROFILES);
+  renderEvaluacion();
+  $('evalWrap').style.display="block";
+  window.scrollTo({top:document.getElementById('evalWrap').offsetTop, behavior:'smooth'});
+});
+
+</script>
 </body>
 </html>
-
