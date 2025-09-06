@@ -3,185 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluación KYC - Análisis de Riesgo</title>
+    <title>Simulador de Evaluación KYC</title>
     <style>
-        /* Estilos generales */
-        body { font-family: sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
-        .container { display: flex; height: 100vh; }
+        :root {
+            --azul-principal: #007bff; --azul-oscuro: #0056b3; --gris-claro: #f0f2f5;
+            --gris-medio: #ddd; --blanco: #fff; --texto-principal: #333;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background-color: var(--gris-claro); color: var(--texto-principal); }
+        .pantalla { display: none; }
+        .pantalla.activa { display: block; }
 
-        /* Barra lateral de casos */
-        .sidebar { width: 300px; background-color: #fff; padding: 20px; border-right: 1px solid #ddd; }
-        .sidebar h2 { font-size: 1.2em; }
-        .sidebar p { font-size: 0.9em; color: #666; }
+        /* --- Pantalla de Inicio --- */
+        #pantalla-inicio {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 100vh; text-align: center;
+        }
+        #pantalla-inicio h1 { font-size: 2.5em; }
+        #pantalla-inicio p { font-size: 1.2em; color: #666; }
+        .btn-inicio {
+            background-color: var(--azul-principal); color: var(--blanco); font-size: 1.2em;
+            padding: 15px 30px; border: none; border-radius: 8px; cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-inicio:hover { background-color: var(--azul-oscuro); }
+
+        /* --- Pantalla Simulador --- */
+        .container { display: flex; height: 100vh; }
+        .sidebar { width: 280px; background-color: var(--blanco); padding: 20px; border-right: 1px solid var(--gris-medio); }
         .casos-lista { list-style: none; padding: 0; margin-top: 20px; }
         .caso {
-            padding: 10px 15px; margin-bottom: 10px; border-radius: 50px;
-            cursor: pointer; transition: background-color 0.3s, color 0.3s;
-            background-color: #eee; text-align: center; width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center; font-weight: bold;
+            padding: 10px 15px; margin-bottom: 10px; border-radius: 50px; cursor: pointer;
+            transition: all 0.3s; background-color: #eee; text-align: center; width: 40px;
+            height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold;
         }
-        .caso:hover { background-color: #ddd; }
-        .caso.activo { background-color: #007bff; color: white; }
-
-        /* Contenido principal */
+        .caso:hover { background-color: var(--gris-medio); }
+        .caso.activo { background-color: var(--azul-principal); color: var(--blanco); transform: scale(1.1); }
         .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; }
-        .perfil-card, .riesgo-card {
-            background-color: #fff; border-radius: 8px;
-            padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        .perfil-presentacion { display: flex; gap: 25px; background-color: var(--blanco); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        #perfil-foto { width: 120px; height: 120px; border-radius: 8px; object-fit: cover; border: 3px solid var(--gris-medio); }
         .perfil-card h3, .riesgo-card h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px;}
-        .perfil-info p, .riesgo-info p { margin: 10px 0; }
-        .perfil-info strong, .riesgo-info strong { color: #0056b3; }
+        .riesgo-card { background-color: var(--blanco); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .riesgo-nivel { padding: 5px 10px; border-radius: 5px; color: white; font-weight: bold; }
         .riesgo-nivel.bajo { background-color: #28a745; }
         .riesgo-nivel.medio { background-color: #ffc107; color: #333; }
         .riesgo-nivel.alto { background-color: #dc3545; }
+        .btn-evaluar {
+            background-color: #28a745; color: var(--blanco); width: 100%; text-align: center;
+            padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em;
+            margin-top: 20px; transition: background-color 0.3s;
+        }
+        .btn-evaluar:hover { background-color: #218838; }
 
+        /* --- Pantalla de Evaluación --- */
+        #pantalla-evaluacion { padding: 50px; max-width: 900px; margin: auto; }
+        .evaluacion-opciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 30px 0; }
+        .opcion-riesgo {
+            border: 2px solid var(--gris-medio); border-radius: 8px; padding: 20px;
+            text-align: center; cursor: pointer; transition: all 0.3s;
+        }
+        .opcion-riesgo:hover { transform: translateY(-5px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .opcion-riesgo.activo { border-color: var(--azul-principal); background-color: #e7f1ff; }
+        textarea { width: 100%; min-height: 120px; margin-top: 20px; padding: 10px; border: 1px solid var(--gris-medio); border-radius: 8px; font-size: 1em; }
+        .btn-siguiente {
+            background-color: var(--azul-principal); color: var(--blanco); float: right;
+            padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1em;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="sidebar">
-        <h2>Evaluación KYC - Análisis de Riesgo AML/CFT</h2>
-        <p><strong>Evaluador:</strong> roberto_azpiri</p>
-        <p><strong>Tipo:</strong> Evaluación Rápida (5 casos)</p>
-        <ul id="casos-lista" class="casos-lista">
-            </ul>
-    </div>
-
-    <div class="main-content" id="main-content">
-        <div class="perfil-card">
-             <h3 id="caso-titulo">Selecciona un caso para comenzar</h3>
-             <div id="perfil-info" class="perfil-info"></div>
-        </div>
-        <div class="riesgo-card">
-            <h3>Análisis de Riesgo Detallado</h3>
-            <div id="riesgo-info" class="riesgo-info"></div>
-        </div>
-        </div>
+<div id="pantalla-inicio" class="pantalla activa">
+    <h1>Simulador de Evaluación de Riesgo KYC</h1>
+    <p>Bienvenido al entrenamiento para analistas AML/CFT.</p>
+    <button class="btn-inicio" onclick="iniciarSimulacion()">Comenzar Simulación</button>
 </div>
 
+<div id="pantalla-simulador" class="pantalla">
+    <div class="container">
+        <div class="sidebar">
+            <h2>Evaluación KYC</h2>
+            <p><strong>Evaluador:</strong> roberto_azpiri</p>
+            <p><strong>Tipo:</strong> Evaluación Rápida (5 casos)</p>
+            <ul id="casos-lista" class="casos-lista"></ul>
+        </div>
+        <div class="main-content" id="main-content">
+            <div id="perfil-presentacion" class="perfil-presentacion">
+                <img id="perfil-foto" src="" alt="Foto del perfil">
+                <div class="perfil-info">
+                    <h3 id="caso-titulo"></h3>
+                    <p><strong>Nacionalidad:</strong> <span id="perfil-nacionalidad"></span></p>
+                    <p><strong>Ocupación:</strong> <span id="perfil-ocupacion"></span></p>
+                    <p><strong>Volumen de Operaciones:</strong> <span id="perfil-volumen"></span></p>
+                </div>
+            </div>
+            <div class="riesgo-card">
+                <h3>Análisis de Riesgo Detallado</h3>
+                <div id="riesgo-info" class="riesgo-info"></div>
+            </div>
+             <button class="btn-evaluar" onclick="irAEvaluacion()">Evaluar Riesgo Global del Cliente</button>
+        </div>
+    </div>
+</div>
+
+<div id="pantalla-evaluacion" class="pantalla">
+    <h2 id="evaluacion-titulo">Evaluación de Riesgo Global</h2>
+    <p>Selecciona el nivel de riesgo que consideras apropiado para este cliente y justifica tu decisión.</p>
+    <div class="evaluacion-opciones">
+        <div class="opcion-riesgo" id="opcion-bajo" onclick="seleccionarRiesgoGlobal('Bajo')">
+            <h4>RIESGO BAJO</h4>
+            <p>Perfil sin alertas significativas</p>
+        </div>
+        <div class="opcion-riesgo" id="opcion-medio" onclick="seleccionarRiesgoGlobal('Medio')">
+            <h4>RIESGO MEDIO</h4>
+            <p>Requiere monitoreo regular</p>
+        </div>
+        <div class="opcion-riesgo" id="opcion-alto" onclick="seleccionarRiesgoGlobal('Alto')">
+            <h4>RIESGO ALTO</h4>
+            <p>Requiere debida diligencia reforzada</p>
+        </div>
+    </div>
+    <textarea id="justificacion" placeholder="Explica las razones de tu evaluación de riesgo (mínimo 50 caracteres)..."></textarea>
+    <button class="btn-siguiente" onclick="finalizarEvaluacion()">Siguiente Caso →</button>
+</div>
+
+
 <script>
-    // --- PARTE 2: BASE DE DATOS CON RIESGOS DETALLADOS ---
+    // --- BASE DE DATOS ---
     const usuarios = [
-        {
-            id: 1,
-            nombre: "Yu Chen",
-            nacionalidad: "China",
-            ocupacion: "Estudiante de Intercambio",
-            volumenOperaciones: "$1,000 mensuales",
-            riesgos: {
-                geografico: { nivel: 'Medio', justificacion: 'Nacionalidad de un país con mayor vigilancia en listas de sanciones.' },
-                transaccional: { nivel: 'Bajo', justificacion: 'Volumen de operaciones bajo y consistente con perfil de estudiante.' },
-                instrumento: { nivel: 'Bajo', justificacion: 'Uso de transferencias bancarias estándar.' },
-                actividad: { nivel: 'Bajo', justificacion: 'Actividad económica (estudiante) no considerada de alto riesgo.'},
-                pep: { nivel: 'Bajo', justificacion: 'No se encontraron coincidencias como Persona Políticamente Expuesta.'}
-            }
-        },
-        {
-            id: 2,
-            nombre: "Daniel Cruz",
-            nacionalidad: "Mexicana",
-            ocupacion: "Desarrollador Fintech",
-            volumenOperaciones: "$20,000 mensuales",
-            riesgos: {
-                geografico: { nivel: 'Bajo', justificacion: 'Nacionalidad y residencia en país de bajo riesgo para la operación.' },
-                transaccional: { nivel: 'Medio', justificacion: 'Volumen de operaciones elevado, requiere monitoreo de la fuente de los fondos.' },
-                instrumento: { nivel: 'Medio', justificacion: 'Posible uso de criptoactivos o instrumentos complejos ligados a su actividad.' },
-                actividad: { nivel: 'Medio', justificacion: 'El sector Fintech es considerado de riesgo inherente medio-alto.'},
-                pep: { nivel: 'Bajo', justificacion: 'No se encontraron coincidencias como PEP.'}
-            }
-        },
-        // Agrega los casos 3, 4 y 5 aquí con la misma estructura
-        {
-            id: 3,
-            nombre: "Ana Robles",
-            nacionalidad: "Venezolana",
-            ocupacion: "Consultora Independiente",
-            volumenOperaciones: "$5,000 mensuales",
-            riesgos: {
-                geografico: { nivel: 'Alto', justificacion: 'Nacionalidad de un país listado en jurisdicciones de alto riesgo (GAFI). Requiere debida diligencia reforzada.' },
-                transaccional: { nivel: 'Bajo', justificacion: 'Volumen de operaciones moderado y justificado por su actividad.' },
-                instrumento: { nivel: 'Bajo', justificacion: 'Uso de transferencias internacionales estándar.' },
-                actividad: { nivel: 'Bajo', justificacion: 'Consultoría no es una actividad de alto riesgo inherente.'},
-                pep: { nivel: 'Bajo', justificacion: 'No se encontraron coincidencias como PEP.'}
-            }
-        },
-        {
-            id: 4,
-            nombre: "Hans Muller",
-            nacionalidad: "Alemana",
-            ocupacion: "Importador/Exportador de Maquinaria",
-            volumenOperaciones: "$150,000 mensuales",
-            riesgos: {
-                geografico: { nivel: 'Bajo', justificacion: 'Nacionalidad y residencia en país de bajo riesgo.' },
-                transaccional: { nivel: 'Alto', justificacion: 'Volumen muy elevado y transacciones transfronterizas frecuentes. Crucial el conocimiento del origen y destino de fondos.' },
-                instrumento: { nivel: 'Medio', justificacion: 'Uso de cartas de crédito y transferencias internacionales de alto valor.' },
-                actividad: { nivel: 'Alto', justificacion: 'El comercio internacional es un sector de alto riesgo para el lavado de dinero (facturación falsa, etc.).'},
-                pep: { nivel: 'Bajo', justificacion: 'No se encontraron coincidencias como PEP.'}
-            }
-        },
-        {
-            id: 5,
-            nombre: "Laura Méndez",
-            nacionalidad: "Mexicana",
-            ocupacion: "Notaria Pública",
-            volumenOperaciones: "$35,000 mensuales",
-            riesgos: {
-                geografico: { nivel: 'Bajo', justificacion: 'Nacionalidad y residencia local.' },
-                transaccional: { nivel: 'Medio', justificacion: 'Manejo de fondos de terceros y operaciones de alto valor.' },
-                instrumento: { nivel: 'Bajo', justificacion: 'Instrumentos bancarios tradicionales.' },
-                actividad: { nivel: 'Alto', justificacion: 'Las actividades vulnerables (fedatarios públicos) son de alto riesgo por su rol en la creación de empresas y transacciones inmobiliarias.'},
-                pep: { nivel: 'Medio', justificacion: 'Identificada como PEP por ser cónyuge de un funcionario de gobierno municipal. Requiere monitoreo continuo.'}
-            }
-        }
+        { id: 1, nombre: "Yu Chen", nacionalidad: "China", ocupacion: "Estudiante", volumenOperaciones: "$1,000", fotoUrl: 'images/yu_chen.jpg', riesgos: { geografico: { nivel: 'Medio', justificacion: 'País con vigilancia en listas de sanciones.' }, transaccional: { nivel: 'Bajo', justificacion: 'Volumen bajo y consistente.' }, instrumento: { nivel: 'Bajo', justificacion: 'Transferencias estándar.' }, actividad: { nivel: 'Bajo', justificacion: 'Actividad no riesgosa.'}, pep: { nivel: 'Bajo', justificacion: 'No es PEP.'} } },
+        { id: 2, nombre: "Daniel Cruz", nacionalidad: "Mexicana", ocupacion: "Desarrollador Fintech", volumenOperaciones: "$20,000", fotoUrl: 'images/daniel_cruz.jpg', riesgos: { geografico: { nivel: 'Bajo', justificacion: 'Residencia local.' }, transaccional: { nivel: 'Medio', justificacion: 'Volumen elevado.' }, instrumento: { nivel: 'Medio', justificacion: 'Posible uso de criptoactivos.' }, actividad: { nivel: 'Medio', justificacion: 'Sector Fintech de riesgo inherente.'}, pep: { nivel: 'Bajo', justificacion: 'No es PEP.'} } },
+        { id: 3, nombre: "Ana Robles", nacionalidad: "Venezolana", ocupacion: "Consultora", volumenOperaciones: "$5,000", fotoUrl: 'images/ana_robles.jpg', riesgos: { geografico: { nivel: 'Alto', justificacion: 'País en jurisdicciones de alto riesgo.' }, transaccional: { nivel: 'Bajo', justificacion: 'Volumen moderado.' }, instrumento: { nivel: 'Bajo', justificacion: 'Transferencias estándar.' }, actividad: { nivel: 'Bajo', justificacion: 'Consultoría no riesgosa.'}, pep: { nivel: 'Bajo', justificacion: 'No es PEP.'} } },
+        { id: 4, nombre: "Hans Muller", nacionalidad: "Alemana", ocupacion: "Importador/Exportador", volumenOperaciones: "$150,000", fotoUrl: 'images/hans_muller.jpg', riesgos: { geografico: { nivel: 'Bajo', justificacion: 'País de bajo riesgo.' }, transaccional: { nivel: 'Alto', justificacion: 'Volumen muy elevado.' }, instrumento: { nivel: 'Medio', justificacion: 'Cartas de crédito.' }, actividad: { nivel: 'Alto', justificacion: 'Comercio internacional es riesgoso.'}, pep: { nivel: 'Bajo', justificacion: 'No es PEP.'} } },
+        { id: 5, nombre: "Laura Méndez", nacionalidad: "Mexicana", ocupacion: "Notaria Pública", volumenOperaciones: "$35,000", fotoUrl: 'images/laura_mendez.jpg', riesgos: { geografico: { nivel: 'Bajo', justificacion: 'Residencia local.' }, transaccional: { nivel: 'Medio', justificacion: 'Manejo de fondos de terceros.' }, instrumento: { nivel: 'Bajo', justificacion: 'Instrumentos tradicionales.' }, actividad: { nivel: 'Alto', justificacion: 'Actividad Vulnerable (fedatario).'}, pep: { nivel: 'Medio', justificacion: 'Es cónyuge de un PEP.'} } }
     ];
+    let casoActualId = 1;
+    let riesgoGlobalSeleccionado = null;
 
-    // --- PARTE 1: LÓGICA DE FUNCIONALIDAD CORREGIDA ---
-    const casosLista = document.getElementById('casos-lista');
-    const casoTitulo = document.getElementById('caso-titulo');
-    const perfilInfo = document.getElementById('perfil-info');
-    const riesgoInfo = document.getElementById('riesgo-info');
-
-    // Función para mostrar el perfil y los riesgos
-    function mostrarInfo(usuario) {
-        casoTitulo.textContent = `Caso ${usuario.id} de 5: ${usuario.nombre}`;
-        
-        // Mostrar información del perfil
-        perfilInfo.innerHTML = `
-            <p><strong>Nacionalidad:</strong> ${usuario.nacionalidad}</p>
-            <p><strong>Ocupación:</strong> ${usuario.ocupacion}</p>
-            <p><strong>Volumen de Operaciones:</strong> ${usuario.volumenOperaciones}</p>
-        `;
-
-        // Mostrar análisis de riesgo detallado
-        const riesgos = usuario.riesgos;
-        riesgoInfo.innerHTML = `
-            <p><strong>Riesgo Geográfico:</strong> <span class="riesgo-nivel ${riesgos.geografico.nivel.toLowerCase()}">${riesgos.geografico.nivel}</span> - ${riesgos.geografico.justificacion}</p>
-            <p><strong>Riesgo Transaccional:</strong> <span class="riesgo-nivel ${riesgos.transaccional.nivel.toLowerCase()}">${riesgos.transaccional.nivel}</span> - ${riesgos.transaccional.justificacion}</p>
-            <p><strong>Riesgo por Instrumento Monetario:</strong> <span class="riesgo-nivel ${riesgos.instrumento.nivel.toLowerCase()}">${riesgos.instrumento.nivel}</span> - ${riesgos.instrumento.justificacion}</p>
-            <p><strong>Riesgo por Actividad/Profesión:</strong> <span class="riesgo-nivel ${riesgos.actividad.nivel.toLowerCase()}">${riesgos.actividad.nivel}</span> - ${riesgos.actividad.justificacion}</p>
-            <p><strong>Riesgo PEP:</strong> <span class="riesgo-nivel ${riesgos.pep.nivel.toLowerCase()}">${riesgos.pep.nivel}</span> - ${riesgos.pep.justificacion}</p>
-        `;
+    // --- MANEJO DE PANTALLAS ---
+    const pantallas = document.querySelectorAll('.pantalla');
+    function mostrarPantalla(nombre) {
+        pantallas.forEach(p => p.classList.remove('activa'));
+        document.getElementById(nombre).classList.add('activa');
     }
 
-    // Función para seleccionar un caso
-    function seleccionarCaso(id) {
-        // Quitar la clase 'activo' de todos los casos
-        document.querySelectorAll('.caso').forEach(caso => caso.classList.remove('activo'));
-        // Añadir la clase 'activo' al caso seleccionado
-        document.getElementById(`caso-${id}`).classList.add('activo');
-
-        // Encontrar el usuario y mostrar su información
-        const usuarioSeleccionado = usuarios.find(u => u.id === id);
-        if (usuarioSeleccionado) {
-            mostrarInfo(usuarioSeleccionado);
-        }
+    // --- LÓGICA DEL SIMULADOR ---
+    function iniciarSimulacion() {
+        mostrarPantalla('pantalla-simulador');
+        renderizarListaCasos();
+        seleccionarCaso(1);
     }
 
-    // Generar la lista de casos al cargar la página
-    window.onload = () => {
+    function renderizarListaCasos() {
+        const casosLista = document.getElementById('casos-lista');
+        casosLista.innerHTML = '';
         usuarios.forEach(usuario => {
             const li = document.createElement('li');
             li.className = 'caso';
@@ -190,12 +164,81 @@
             li.onclick = () => seleccionarCaso(usuario.id);
             casosLista.appendChild(li);
         });
+    }
 
-        // Opcional: Seleccionar el primer caso por defecto
-        seleccionarCaso(1);
+    function seleccionarCaso(id) {
+        casoActualId = id;
+        const usuario = usuarios.find(u => u.id === id);
+        if (!usuario) return;
+
+        // Actualizar UI
+        document.querySelectorAll('.caso').forEach(c => c.classList.remove('activo'));
+        document.getElementById(`caso-${id}`).classList.add('activo');
+        
+        document.getElementById('perfil-foto').src = usuario.fotoUrl;
+        document.getElementById('caso-titulo').textContent = `Caso ${usuario.id} de 5: ${usuario.nombre}`;
+        document.getElementById('perfil-nacionalidad').textContent = usuario.nacionalidad;
+        document.getElementById('perfil-ocupacion').textContent = usuario.ocupacion;
+        document.getElementById('perfil-volumen').textContent = usuario.volumenOperaciones;
+
+        const riesgos = usuario.riesgos;
+        const riesgoInfo = document.getElementById('riesgo-info');
+        riesgoInfo.innerHTML = `
+            <p><strong>Riesgo Geográfico:</strong> <span class="riesgo-nivel ${riesgos.geografico.nivel.toLowerCase()}">${riesgos.geografico.nivel}</span> - ${riesgos.geografico.justificacion}</p>
+            <p><strong>Riesgo Transaccional:</strong> <span class="riesgo-nivel ${riesgos.transaccional.nivel.toLowerCase()}">${riesgos.transaccional.nivel}</span> - ${riesgos.transaccional.justificacion}</p>
+            <p><strong>Riesgo por Instrumento Monetario:</strong> <span class="riesgo-nivel ${riesgos.instrumento.nivel.toLowerCase()}">${riesgos.instrumento.nivel}</span> - ${riesgos.instrumento.justificacion}</p>
+            <p><strong>Riesgo por Actividad/Profesión:</strong> <span class="riesgo-nivel ${riesgos.actividad.nivel.toLowerCase()}">${riesgos.actividad.nivel}</span> - ${riesgos.actividad.justificacion}</p>
+            <p><strong>Riesgo PEP:</strong> <span class="riesgo-nivel ${riesgos.pep.nivel.toLowerCase()}">${riesgos.pep.nivel}</span> - ${riesgos.pep.justificacion}</p>
+        `;
+        mostrarPantalla('pantalla-simulador');
+    }
+
+    function irAEvaluacion() {
+        const usuario = usuarios.find(u => u.id === casoActualId);
+        document.getElementById('evaluacion-titulo').textContent = `Evaluación de Riesgo Global para ${usuario.nombre}`;
+        
+        // Limpiar estado de evaluación anterior
+        document.getElementById('justificacion').value = '';
+        riesgoGlobalSeleccionado = null;
+        document.querySelectorAll('.opcion-riesgo').forEach(op => op.classList.remove('activo'));
+        
+        mostrarPantalla('pantalla-evaluacion');
+    }
+
+    function seleccionarRiesgoGlobal(nivel) {
+        riesgoGlobalSeleccionado = nivel;
+        document.querySelectorAll('.opcion-riesgo').forEach(op => op.classList.remove('activo'));
+        document.getElementById(`opcion-${nivel.toLowerCase()}`).classList.add('activo');
+    }
+
+    function finalizarEvaluacion() {
+        const justificacion = document.getElementById('justificacion').value;
+
+        if (!riesgoGlobalSeleccionado) {
+            alert('Por favor, selecciona un nivel de riesgo global.');
+            return;
+        }
+        if (justificacion.length < 50) {
+            alert('La justificación debe tener al menos 50 caracteres.');
+            return;
+        }
+
+        console.log(`Caso ${casoActualId} evaluado como ${riesgoGlobalSeleccionado}. Justificación: ${justificacion}`);
+        
+        // Mover al siguiente caso o finalizar
+        if (casoActualId < usuarios.length) {
+            seleccionarCaso(casoActualId + 1);
+        } else {
+            alert('¡Has completado todos los casos!');
+            mostrarPantalla('pantalla-inicio');
+        }
+    }
+
+    // Inicializar la aplicación
+    window.onload = () => {
+        mostrarPantalla('pantalla-inicio');
     };
 </script>
 
 </body>
 </html>
-
