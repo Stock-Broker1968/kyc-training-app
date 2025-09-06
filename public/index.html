@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador KYC - Evaluación de Riesgos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -48,6 +49,20 @@
         .registration-screen {
             padding: 40px;
             text-align: center;
+        }
+        
+        .disclaimer {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            color: #856404;
+        }
+        
+        .disclaimer h3 {
+            margin-bottom: 10px;
+            color: #d63031;
         }
         
         .registration-form {
@@ -179,34 +194,41 @@
             font-weight: bold;
         }
         
-        .risk-evaluation {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
+        .risk-categories {
+            display: grid;
+            gap: 25px;
             margin-bottom: 30px;
         }
         
-        .risk-evaluation h3 {
+        .risk-category {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .risk-category h4 {
             color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.2em;
         }
         
         .risk-options {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 15px;
         }
         
         .risk-option {
-            padding: 20px;
+            padding: 15px;
             border: 2px solid #e9ecef;
-            border-radius: 10px;
+            border-radius: 8px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
             background: white;
+            font-size: 0.9em;
         }
         
         .risk-option:hover {
@@ -229,8 +251,22 @@
         .risk-high { border-color: #e74c3c; }
         .risk-high.selected { background: #e74c3c; border-color: #e74c3c; }
         
+        .geographic-selects {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .geographic-selects select {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
         .justification-section {
-            margin-top: 20px;
+            margin-top: 15px;
         }
         
         .justification-section label {
@@ -238,19 +274,21 @@
             margin-bottom: 8px;
             color: #2c3e50;
             font-weight: bold;
+            font-size: 0.9em;
         }
         
         .justification-section textarea {
             width: 100%;
-            min-height: 100px;
-            padding: 15px;
+            min-height: 60px;
+            padding: 10px;
             border: 2px solid #e9ecef;
             border-radius: 8px;
             font-family: inherit;
             resize: vertical;
+            font-size: 0.9em;
         }
         
-        .next-case-btn {
+        .next-case-btn, .finish-btn {
             background: linear-gradient(135deg, #27ae60, #2ecc71);
             color: white;
             padding: 15px 30px;
@@ -266,16 +304,17 @@
         
         .finish-btn {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-            padding: 20px 40px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            display: block;
-            margin: 30px auto;
             box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .validation-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            display: none;
         }
         
         /* Pantalla de Resultados */
@@ -307,6 +346,31 @@
             margin-top: 15px;
         }
         
+        .results-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .category-result {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 5px solid #3498db;
+        }
+        
+        .category-result.correct {
+            border-left-color: #27ae60;
+            background: #f1f8e9;
+        }
+        
+        .category-result.incorrect {
+            border-left-color: #e74c3c;
+            background: #fdf2f2;
+        }
+        
         .cases-review {
             display: grid;
             gap: 20px;
@@ -320,17 +384,7 @@
             border-left: 5px solid #3498db;
         }
         
-        .case-result.correct {
-            border-left-color: #27ae60;
-            background: #f1f8e9;
-        }
-        
-        .case-result.incorrect {
-            border-left-color: #e74c3c;
-            background: #fdf2f2;
-        }
-        
-        .print-report-btn {
+        .generate-pdf-btn {
             background: linear-gradient(135deg, #8e44ad, #9b59b6);
             color: white;
             padding: 20px 40px;
@@ -358,25 +412,14 @@
             .risk-options {
                 grid-template-columns: 1fr;
             }
+            
+            .geographic-selects {
+                grid-template-columns: 1fr;
+            }
         }
         
         .hidden {
             display: none !important;
-        }
-        
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .print-content, .print-content * {
-                visibility: visible;
-            }
-            .print-content {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
         }
     </style>
 </head>
@@ -390,6 +433,11 @@
         
         <!-- Pantalla de Registro -->
         <div class="registration-screen" id="registrationScreen">
+            <div class="disclaimer">
+                <h3>⚠️ IMPORTANTE - CASOS FICTICIOS</h3>
+                <p>Los perfiles y casos presentados en este simulador son completamente <strong>FICTICIOS</strong> y han sido creados únicamente para efectos de entrenamiento y práctica en evaluación de riesgos KYC/AML. Cualquier similitud con personas reales es pura coincidencia.</p>
+            </div>
+            
             <h2 style="color: #2c3e50; margin-bottom: 30px;">Registro para Acceder al Simulador</h2>
             <div class="registration-form">
                 <div class="form-group">
@@ -448,12 +496,16 @@
                 </p>
             </div>
             
+            <div class="results-summary" id="resultsSummary">
+                <!-- Resumen por categorías -->
+            </div>
+            
             <div class="cases-review" id="casesReview">
                 <!-- Revisión de casos se carga aquí -->
             </div>
             
-            <button class="print-report-btn" onclick="printReport()">
-                🖨️ IMPRIMIR REPORTE
+            <button class="generate-pdf-btn" onclick="generatePDF()">
+                📄 GENERAR REPORTE PDF
             </button>
             
             <div style="text-align: center; margin-top: 30px; padding: 20px; background: #e8f5e8; border-radius: 10px;">
@@ -468,13 +520,8 @@
         </div>
     </div>
     
-    <!-- Contenido para imprimir -->
-    <div class="print-content hidden" id="printContent">
-        <!-- El reporte se genera aquí para impresión -->
-    </div>
-    
     <script>
-        // Base de datos de perfiles
+        // Base de datos de perfiles con información completa
         const profiles = [
             {
                 id: 1,
@@ -488,8 +535,15 @@
                 cashHandling: "Transferencias desde cuentas en Suiza",
                 fundOrigin: "Pariente en Alemania, Exministro de Finanzas, listado como PEP",
                 pepRelation: "Perfil complejo por conexiones políticas internacionales",
-                correctRisk: "high",
-                explanation: "Alto riesgo por transferencias internacionales de gran volumen, origen desde paraíso fiscal (Suiza), y conexión directa con PEP extranjero."
+                mexicanState: "CDMX",
+                country: "Suiza",
+                correctAnswers: {
+                    activity: "medium", // Importador
+                    transactions: "high", // $500K USD
+                    instruments: "medium", // Transferencias internacionales
+                    geographic: "high", // Suiza (paraíso fiscal)
+                    pep: "high" // PEP familiar directo
+                }
             },
             {
                 id: 2,
@@ -503,8 +557,15 @@
                 cashHandling: "Transferencias familiares desde Estados Unidos",
                 fundOrigin: "Esposa de empresario involucrado en escándalo de corrupción",
                 pepRelation: "Posible intento de ocultar origen de fondos",
-                correctRisk: "high",
-                explanation: "Alto riesgo por conexión con persona involucrada en corrupción y posible uso como testaferro para ocultar activos."
+                mexicanState: "Estado de México",
+                country: "Estados Unidos",
+                correctAnswers: {
+                    activity: "low", // Ama de casa
+                    transactions: "low", // $10K mensuales
+                    instruments: "low", // Transferencias normales
+                    geographic: "low", // Estados Unidos (bajo riesgo)
+                    pep: "high" // Conexión con corrupción
+                }
             },
             {
                 id: 3,
@@ -518,8 +579,15 @@
                 cashHandling: "Depósitos de seguidores, sin justificación clara",
                 fundOrigin: "Actividad de alto riesgo por no justificar origen de ingresos",
                 pepRelation: "Sin parientes PEPs",
-                correctRisk: "medium",
-                explanation: "Riesgo medio por alta manipulación de efectivo sin justificación clara del origen, aunque la actividad de influencer puede generar ingresos variables."
+                mexicanState: "Jalisco",
+                country: "México",
+                correctAnswers: {
+                    activity: "medium", // Influencer (nueva economía)
+                    transactions: "medium", // $50K mensuales
+                    instruments: "high", // Alto uso de efectivo
+                    geographic: "low", // Jalisco (bajo riesgo)
+                    pep: "low" // Sin conexiones PEP
+                }
             },
             {
                 id: 4,
@@ -533,8 +601,15 @@
                 cashHandling: "No posee RFC ni CURP, transacciones en efectivo",
                 fundOrigin: "Ingresos no son fácilmente verificables",
                 pepRelation: "Sin parientes PEPs",
-                correctRisk: "medium",
-                explanation: "Riesgo medio por falta de documentación formal (RFC/CURP) y dificultad para verificar ingresos, común en sector rural."
+                mexicanState: "Oaxaca",
+                country: "México",
+                correctAnswers: {
+                    activity: "low", // Agricultor (actividad tradicional)
+                    transactions: "low", // Volumen bajo
+                    instruments: "medium", // Alto efectivo por necesidad
+                    geographic: "medium", // Oaxaca (riesgo medio por pobreza)
+                    pep: "low" // Sin conexiones PEP
+                }
             },
             {
                 id: 5,
@@ -548,8 +623,15 @@
                 cashHandling: "Depósitos de clientes corporativos",
                 fundOrigin: "Familiares involucrados en procesos legales, sin perfil PEP",
                 pepRelation: "No hay familiares PEPs",
-                correctRisk: "low",
-                explanation: "Bajo riesgo por actividad profesional regulada, ingresos justificados y ausencia de conexiones con PEPs."
+                mexicanState: "CDMX",
+                country: "México",
+                correctAnswers: {
+                    activity: "low", // Profesional regulado
+                    transactions: "medium", // $120K mensuales
+                    instruments: "low", // Transferencias corporativas
+                    geographic: "low", // CDMX (bajo riesgo)
+                    pep: "low" // Sin conexiones PEP
+                }
             },
             {
                 id: 6,
@@ -563,8 +645,15 @@
                 cashHandling: "Depósitos en efectivo de $5,000 diarios",
                 fundOrigin: "Transacciones diarias en efectivo con origen incierto",
                 pepRelation: "Sin parientes PEPs",
-                correctRisk: "medium",
-                explanation: "Riesgo medio por alta frecuencia de depósitos en efectivo y dificultad para rastrear el origen exacto en actividad informal."
+                mexicanState: "CDMX",
+                country: "México",
+                correctAnswers: {
+                    activity: "medium", // Comercio informal
+                    transactions: "medium", // Diarios pero bajo monto
+                    instruments: "high", // Alto efectivo diario
+                    geographic: "low", // CDMX (bajo riesgo)
+                    pep: "low" // Sin conexiones PEP
+                }
             },
             {
                 id: 7,
@@ -578,8 +667,15 @@
                 cashHandling: "Transferencias desde paraísos fiscales",
                 fundOrigin: "Exfuncionario de alto rango, parientes con contratos públicos",
                 pepRelation: "Posible lavado de activos por conexiones con recursos públicos",
-                correctRisk: "high",
-                explanation: "Alto riesgo por transferencias desde paraísos fiscales, antecedentes como funcionario público y conexiones familiares con contratos gubernamentales."
+                mexicanState: "Michoacán",
+                country: "Islas Caimán",
+                correctAnswers: {
+                    activity: "high", // Exfuncionario público
+                    transactions: "high", // Alto volumen
+                    instruments: "high", // Paraísos fiscales
+                    geographic: "high", // Michoacán + Islas Caimán
+                    pep: "high" // Exfuncionario PEP
+                }
             },
             {
                 id: 8,
@@ -593,8 +689,15 @@
                 cashHandling: "Ingresos de consultorio y hospitales privados",
                 fundOrigin: "Posible irregularidad en pagos en efectivo que no concuerdan con perfil",
                 pepRelation: "Sin parientes PEPs",
-                correctRisk: "low",
-                explanation: "Bajo riesgo por actividad profesional regulada con ingresos verificables, aunque requiere monitoreo por pagos en efectivo."
+                mexicanState: "Nuevo León",
+                country: "México",
+                correctAnswers: {
+                    activity: "low", // Profesional de salud
+                    transactions: "medium", // $100K mensuales
+                    instruments: "medium", // Efectivo en medicina
+                    geographic: "low", // Nuevo León (bajo riesgo)
+                    pep: "low" // Sin conexiones PEP
+                }
             },
             {
                 id: 9,
@@ -608,8 +711,15 @@
                 cashHandling: "Transferencias mensuales del gobierno de China",
                 fundOrigin: "Dependiente de beca gubernamental, fondos institucionalizados",
                 pepRelation: "Sin parientes PEPs",
-                correctRisk: "low",
-                explanation: "Bajo riesgo por fondos institucionalizados gubernamentales y perfil estudiantil verificable."
+                mexicanState: "CDMX",
+                country: "China",
+                correctAnswers: {
+                    activity: "low", // Estudiante
+                    transactions: "low", // $10K mensuales
+                    instruments: "low", // Transferencias gubernamentales
+                    geographic: "medium", // China (riesgo medio)
+                    pep: "low" // Sin conexiones PEP
+                }
             },
             {
                 id: 10,
@@ -623,8 +733,15 @@
                 cashHandling: "Inversiones en criptomonedas y tecnología emergente",
                 fundOrigin: "Empresa no registrada ante SAT, sin estructura legal",
                 pepRelation: "Sin parientes PEPs",
-                correctRisk: "medium",
-                explanation: "Riesgo medio por falta de RFC, empresa no registrada y operaciones con criptomonedas que requieren mayor supervisión."
+                mexicanState: "Querétaro",
+                country: "México",
+                correctAnswers: {
+                    activity: "medium", // Fintech (regulado)
+                    transactions: "low", // Volumen bajo
+                    instruments: "high", // Criptomonedas
+                    geographic: "low", // Querétaro (bajo riesgo)
+                    pep: "low" // Sin conexiones PEP
+                }
             },
             {
                 id: 11,
@@ -638,8 +755,15 @@
                 cashHandling: "Pensión gubernamental",
                 fundOrigin: "Ingresos estables y verificables",
                 pepRelation: "Sin parientes PEPs",
-                correctRisk: "low",
-                explanation: "Bajo riesgo por ingresos gubernamentales estables, verificables y patrón transaccional predecible."
+                mexicanState: "Baja California",
+                country: "México",
+                correctAnswers: {
+                    activity: "low", // Pensionado
+                    transactions: "low", // $10K mensuales
+                    instruments: "low", // Pensión gubernamental
+                    geographic: "medium", // Baja California (frontera)
+                    pep: "low" // Sin conexiones PEP
+                }
             },
             {
                 id: 12,
@@ -653,21 +777,71 @@
                 cashHandling: "Alta visibilidad en medios",
                 fundOrigin: "Pagos por contrato y eventos",
                 pepRelation: "Sin parientes PEPs",
-                correctRisk: "low",
-                explanation: "Bajo riesgo por ingresos de fuente verificable en industria del entretenimiento con visibilidad pública."
+                mexicanState: "Nuevo León",
+                country: "México",
+                correctAnswers: {
+                    activity: "low", // Entretenimiento regulado
+                    transactions: "medium", // $50K mensuales
+                    instruments: "low", // Contratos formales
+                    geographic: "low", // Nuevo León (bajo riesgo)
+                    pep: "low" // Sin conexiones PEP
+                }
             }
         ];
+        
+        // Catalogación de riesgos geográficos
+        const mexicanStatesRisk = {
+            "CDMX": "low",
+            "Nuevo León": "low", 
+            "Jalisco": "low",
+            "Estado de México": "low",
+            "Querétaro": "low",
+            "Yucatán": "low",
+            "Baja California": "medium",
+            "Sonora": "medium",
+            "Coahuila": "medium",
+            "Oaxaca": "medium",
+            "Chiapas": "medium",
+            "Sinaloa": "high",
+            "Tamaulipas": "high",
+            "Michoacán": "high",
+            "Guerrero": "high",
+            "Veracruz": "high"
+        };
+        
+        const countryRisk = {
+            "México": "low",
+            "Estados Unidos": "low",
+            "Canadá": "low",
+            "España": "low",
+            "Francia": "low",
+            "China": "medium",
+            "Rusia": "medium",
+            "Brasil": "medium",
+            "Colombia": "medium",
+            "Venezuela": "high",
+            "Suiza": "high", // Paraíso fiscal
+            "Islas Caimán": "high",
+            "Panamá": "high",
+            "Afganistán": "high",
+            "Corea del Norte": "high"
+        };
         
         // Variables globales
         let userData = {};
         let selectedProfiles = [];
         let currentCaseIndex = 0;
         let userAnswers = [];
-        let currentAnswer = { risk: '', justification: '' };
+        let currentAnswers = {
+            activity: { risk: '', justification: '' },
+            transactions: { risk: '', justification: '' },
+            instruments: { risk: '', justification: '' },
+            geographic: { risk: '', justification: '' },
+            pep: { risk: '', justification: '' }
+        };
         
         // Función para iniciar simulación
         function startSimulation() {
-            // Validar formulario
             const name = document.getElementById('userName').value.trim();
             const email = document.getElementById('userEmail').value.trim();
             const phone = document.getElementById('userPhone').value.trim();
@@ -678,34 +852,26 @@
                 return;
             }
             
-            // Validar email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 alert('Por favor ingrese un correo electrónico válido');
                 return;
             }
             
-            // Guardar datos del usuario
             userData = { name, email, phone, company };
-            
-            // Seleccionar 3 perfiles aleatorios
             selectedProfiles = selectRandomProfiles(3);
             
-            // Mostrar pantalla de evaluación
             document.getElementById('registrationScreen').style.display = 'none';
             document.getElementById('evaluationScreen').style.display = 'block';
             
-            // Cargar primer caso
             loadCurrentCase();
         }
         
-        // Función para seleccionar perfiles aleatorios
         function selectRandomProfiles(count) {
             const shuffled = [...profiles].sort(() => 0.5 - Math.random());
             return shuffled.slice(0, count);
         }
         
-        // Función para cargar caso actual
         function loadCurrentCase() {
             const profile = selectedProfiles[currentCaseIndex];
             const progress = ((currentCaseIndex + 1) / selectedProfiles.length) * 100;
@@ -717,7 +883,7 @@
                 <div class="subject-card">
                     <div class="photo-container">
                         <img src="${profile.photo}" alt="Foto de ${profile.name}" class="subject-photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="photo-placeholder" style="display: none;">👤</div>
+                        <div style="display: none; align-items: center; justify-content: center; height: 100%; font-size: 3em; color: #7f8c8d;">👤</div>
                     </div>
                     
                     <div class="subject-info">
@@ -748,131 +914,329 @@
                     </div>
                 </div>
                 
-                <div class="risk-evaluation">
-                    <h3>🎯 Evalúe el Nivel de Riesgo Global del Sujeto</h3>
-                    
-                    <div class="risk-options">
-                        <div class="risk-option risk-low" onclick="selectRisk('low')">
-                            <h4>🟢 RIESGO BAJO</h4>
-                            <p>Cliente de bajo riesgo, operaciones normales</p>
+                <div class="risk-categories">
+                    <!-- Actividad Económica -->
+                    <div class="risk-category">
+                        <h4>💼 1. Riesgo por Actividad Económica</h4>
+                        <div class="risk-options">
+                            <div class="risk-option risk-low" onclick="selectCategoryRisk('activity', 'low')">
+                                <strong>BAJO</strong><br>
+                                Empleado, profesor, profesional regulado
+                            </div>
+                            <div class="risk-option risk-medium" onclick="selectCategoryRisk('activity', 'medium')">
+                                <strong>MEDIO</strong><br>
+                                Comerciante, empresario, freelancer
+                            </div>
+                            <div class="risk-option risk-high" onclick="selectCategoryRisk('activity', 'high')">
+                                <strong>ALTO</strong><br>
+                                Casas de cambio, PEPs, actividades no reguladas
+                            </div>
                         </div>
-                        
-                        <div class="risk-option risk-medium" onclick="selectRisk('medium')">
-                            <h4>🟡 RIESGO MEDIO</h4>
-                            <p>Cliente con factores de riesgo moderados</p>
-                        </div>
-                        
-                        <div class="risk-option risk-high" onclick="selectRisk('high')">
-                            <h4>🔴 RIESGO ALTO</h4>
-                            <p>Cliente de alto riesgo, requiere mayor supervisión</p>
+                        <div class="justification-section">
+                            <label>Justificación (mín. 25 caracteres):</label>
+                            <textarea id="activity-justification" oninput="updateJustification('activity')" placeholder="Explique su evaluación..."></textarea>
+                            <div class="validation-message" id="activity-validation"></div>
                         </div>
                     </div>
                     
-                    <div class="justification-section">
-                        <label for="riskJustification">Justificación de su evaluación (mínimo 50 caracteres):</label>
-                        <textarea id="riskJustification" placeholder="Explique las razones de su evaluación de riesgo considerando la actividad, transaccionalidad, origen de fondos y factores PEP..." oninput="updateJustification()"></textarea>
+                    <!-- Transaccionalidad -->
+                    <div class="risk-category">
+                        <h4>💰 2. Riesgo por Transaccionalidad</h4>
+                        <div class="risk-options">
+                            <div class="risk-option risk-low" onclick="selectCategoryRisk('transactions', 'low')">
+                                <strong>BAJO</strong><br>
+                                Hasta $50,000 MXN mensuales
+                            </div>
+                            <div class="risk-option risk-medium" onclick="selectCategoryRisk('transactions', 'medium')">
+                                <strong>MEDIO</strong><br>
+                                $50,001 - $200,000 MXN mensuales
+                            </div>
+                            <div class="risk-option risk-high" onclick="selectCategoryRisk('transactions', 'high')">
+                                <strong>ALTO</strong><br>
+                                Más de $200,000 MXN mensuales
+                            </div>
+                        </div>
+                        <div class="justification-section">
+                            <label>Justificación (mín. 25 caracteres):</label>
+                            <textarea id="transactions-justification" oninput="updateJustification('transactions')" placeholder="Explique su evaluación..."></textarea>
+                            <div class="validation-message" id="transactions-validation"></div>
+                        </div>
                     </div>
                     
-                    ${currentCaseIndex < selectedProfiles.length - 1 ? 
-                        '<button class="next-case-btn" onclick="nextCase()" id="nextBtn" style="display: none;">SIGUIENTE CASO ▶️</button>' :
-                        '<button class="finish-btn" onclick="finishEvaluation()" id="finishBtn" style="display: none;">FINALIZAR EVALUACIÓN 🏁</button>'
-                    }
+                    <!-- Instrumento Monetario -->
+                    <div class="risk-category">
+                        <h4>🏦 3. Riesgo por Instrumento Monetario</h4>
+                        <div class="risk-options">
+                            <div class="risk-option risk-low" onclick="selectCategoryRisk('instruments', 'low')">
+                                <strong>BAJO</strong><br>
+                                Transferencias, cheques, nómina
+                            </div>
+                            <div class="risk-option risk-medium" onclick="selectCategoryRisk('instruments', 'medium')">
+                                <strong>MEDIO</strong><br>
+                                Efectivo moderado, depósitos mixtos
+                            </div>
+                            <div class="risk-option risk-high" onclick="selectCategoryRisk('instruments', 'high')">
+                                <strong>ALTO</strong><br>
+                                Alto uso efectivo, criptomonedas, paraísos fiscales
+                            </div>
+                        </div>
+                        <div class="justification-section">
+                            <label>Justificación (mín. 25 caracteres):</label>
+                            <textarea id="instruments-justification" oninput="updateJustification('instruments')" placeholder="Explique su evaluación..."></textarea>
+                            <div class="validation-message" id="instruments-validation"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Entidad Geográfica -->
+                    <div class="risk-category">
+                        <h4>🌍 4. Riesgo por Entidad Geográfica</h4>
+                        <div class="geographic-selects">
+                            <select id="mexican-state" onchange="updateGeographicRisk()">
+                                <option value="">Estado Mexicano</option>
+                                <option value="CDMX">Ciudad de México</option>
+                                <option value="Nuevo León">Nuevo León</option>
+                                <option value="Jalisco">Jalisco</option>
+                                <option value="Estado de México">Estado de México</option>
+                                <option value="Querétaro">Querétaro</option>
+                                <option value="Yucatán">Yucatán</option>
+                                <option value="Baja California">Baja California</option>
+                                <option value="Sonora">Sonora</option>
+                                <option value="Coahuila">Coahuila</option>
+                                <option value="Oaxaca">Oaxaca</option>
+                                <option value="Chiapas">Chiapas</option>
+                                <option value="Sinaloa">Sinaloa</option>
+                                <option value="Tamaulipas">Tamaulipas</option>
+                                <option value="Michoacán">Michoacán</option>
+                                <option value="Guerrero">Guerrero</option>
+                                <option value="Veracruz">Veracruz</option>
+                            </select>
+                            
+                            <select id="country-origin" onchange="updateGeographicRisk()">
+                                <option value="">País</option>
+                                <option value="México">México</option>
+                                <option value="Estados Unidos">Estados Unidos</option>
+                                <option value="Canadá">Canadá</option>
+                                <option value="España">España</option>
+                                <option value="Francia">Francia</option>
+                                <option value="China">China</option>
+                                <option value="Rusia">Rusia</option>
+                                <option value="Brasil">Brasil</option>
+                                <option value="Colombia">Colombia</option>
+                                <option value="Venezuela">Venezuela</option>
+                                <option value="Suiza">Suiza</option>
+                                <option value="Islas Caimán">Islas Caimán</option>
+                                <option value="Panamá">Panamá</option>
+                                <option value="Afganistán">Afganistán</option>
+                                <option value="Corea del Norte">Corea del Norte</option>
+                            </select>
+                        </div>
+                        <div class="risk-options">
+                            <div class="risk-option risk-low" onclick="selectCategoryRisk('geographic', 'low')">
+                                <strong>BAJO</strong><br>
+                                Estados seguros, países desarrollados
+                            </div>
+                            <div class="risk-option risk-medium" onclick="selectCategoryRisk('geographic', 'medium')">
+                                <strong>MEDIO</strong><br>
+                                Estados fronterizos, países emergentes
+                            </div>
+                            <div class="risk-option risk-high" onclick="selectCategoryRisk('geographic', 'high')">
+                                <strong>ALTO</strong><br>
+                                Estados violentos, paraísos fiscales, países sancionados
+                            </div>
+                        </div>
+                        <div class="justification-section">
+                            <label>Justificación (mín. 25 caracteres):</label>
+                            <textarea id="geographic-justification" oninput="updateJustification('geographic')" placeholder="Explique su evaluación..."></textarea>
+                            <div class="validation-message" id="geographic-validation"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Relación con PEP -->
+                    <div class="risk-category">
+                        <h4>👑 5. Riesgo por Relación con PEP</h4>
+                        <div class="risk-options">
+                            <div class="risk-option risk-low" onclick="selectCategoryRisk('pep', 'low')">
+                                <strong>BAJO</strong><br>
+                                Sin relación con PEP
+                            </div>
+                            <div class="risk-option risk-medium" onclick="selectCategoryRisk('pep', 'medium')">
+                                <strong>MEDIO</strong><br>
+                                Familiar cercano o socio de PEP
+                            </div>
+                            <div class="risk-option risk-high" onclick="selectCategoryRisk('pep', 'high')">
+                                <strong>ALTO</strong><br>
+                                Es PEP activo o relacionado con corrupción
+                            </div>
+                        </div>
+                        <div class="justification-section">
+                            <label>Justificación (mín. 25 caracteres):</label>
+                            <textarea id="pep-justification" oninput="updateJustification('pep')" placeholder="Explique su evaluación..."></textarea>
+                            <div class="validation-message" id="pep-validation"></div>
+                        </div>
+                    </div>
                 </div>
+                
+                ${currentCaseIndex < selectedProfiles.length - 1 ? 
+                    '<button class="next-case-btn" onclick="nextCase()" id="nextBtn" style="display: none;">SIGUIENTE CASO ▶️</button>' :
+                    '<button class="finish-btn" onclick="finishEvaluation()" id="finishBtn" style="display: none;">FINALIZAR EVALUACIÓN 🏁</button>'
+                }
+                
+                <div class="validation-message" id="global-validation" style="margin-top: 20px;"></div>
             `;
             
             document.getElementById('currentCase').innerHTML = caseHTML;
             
-            // Resetear respuesta actual
-            currentAnswer = { risk: '', justification: '' };
+            // Reset current answers
+            currentAnswers = {
+                activity: { risk: '', justification: '' },
+                transactions: { risk: '', justification: '' },
+                instruments: { risk: '', justification: '' },
+                geographic: { risk: '', justification: '' },
+                pep: { risk: '', justification: '' }
+            };
         }
         
-        // Función para seleccionar riesgo
-        function selectRisk(riskLevel) {
-            // Limpiar selecciones anteriores
-            document.querySelectorAll('.risk-option').forEach(option => {
+        function selectCategoryRisk(category, riskLevel) {
+            // Clear previous selections for this category
+            document.querySelectorAll(`#currentCase .risk-category:nth-child(${getCategoryIndex(category)}) .risk-option`).forEach(option => {
                 option.classList.remove('selected');
             });
             
-            // Seleccionar opción actual
-            document.querySelector(`.risk-${riskLevel}`).classList.add('selected');
+            // Select current option
+            event.target.classList.add('selected');
             
-            currentAnswer.risk = riskLevel;
+            currentAnswers[category].risk = riskLevel;
             checkCanProceed();
         }
         
-        // Función para actualizar justificación
-        function updateJustification() {
-            const justification = document.getElementById('riskJustification').value;
-            currentAnswer.justification = justification;
+        function getCategoryIndex(category) {
+            const indexes = { activity: 1, transactions: 2, instruments: 3, geographic: 4, pep: 5 };
+            return indexes[category];
+        }
+        
+        function updateJustification(category) {
+            const justification = document.getElementById(`${category}-justification`).value;
+            currentAnswers[category].justification = justification;
+            
+            const validation = document.getElementById(`${category}-validation`);
+            if (justification.length < 25) {
+                validation.textContent = `Faltan ${25 - justification.length} caracteres`;
+                validation.style.display = 'block';
+            } else {
+                validation.style.display = 'none';
+            }
+            
             checkCanProceed();
         }
         
-        // Función para verificar si puede proceder
+        function updateGeographicRisk() {
+            const state = document.getElementById('mexican-state').value;
+            const country = document.getElementById('country-origin').value;
+            
+            if (state && country) {
+                const stateRisk = mexicanStatesRisk[state] || 'medium';
+                const countryRiskLevel = countryRisk[country] || 'medium';
+                
+                // Auto-suggest risk level based on selections
+                const maxRisk = getHigherRisk(stateRisk, countryRiskLevel);
+                
+                // Clear previous geographic selections
+                document.querySelectorAll(`#currentCase .risk-category:nth-child(4) .risk-option`).forEach(option => {
+                    option.classList.remove('selected');
+                });
+                
+                // Auto-select suggested risk level
+                document.querySelector(`#currentCase .risk-category:nth-child(4) .risk-${maxRisk}`).classList.add('selected');
+                currentAnswers.geographic.risk = maxRisk;
+                
+                checkCanProceed();
+            }
+        }
+        
+        function getHigherRisk(risk1, risk2) {
+            const riskLevels = { low: 1, medium: 2, high: 3 };
+            const maxLevel = Math.max(riskLevels[risk1], riskLevels[risk2]);
+            return Object.keys(riskLevels).find(key => riskLevels[key] === maxLevel);
+        }
+        
         function checkCanProceed() {
-            const canProceed = currentAnswer.risk && currentAnswer.justification.length >= 50;
-            const btn = document.getElementById('nextBtn') || document.getElementById('finishBtn');
-            if (btn) {
-                btn.style.display = canProceed ? 'block' : 'none';
-            }
-        }
-        
-        // Función para siguiente caso
-        function nextCase() {
-            if (!currentAnswer.risk || currentAnswer.justification.length < 50) {
-                alert('Por favor complete la evaluación y justificación antes de continuar');
-                return;
-            }
+            const categories = ['activity', 'transactions', 'instruments', 'geographic', 'pep'];
+            let allComplete = true;
+            let missingItems = [];
             
-            // Guardar respuesta
-            userAnswers.push({
-                profileId: selectedProfiles[currentCaseIndex].id,
-                userRisk: currentAnswer.risk,
-                correctRisk: selectedProfiles[currentCaseIndex].correctRisk,
-                justification: currentAnswer.justification,
-                profile: selectedProfiles[currentCaseIndex]
+            categories.forEach(category => {
+                if (!currentAnswers[category].risk || currentAnswers[category].justification.length < 25) {
+                    allComplete = false;
+                    if (!currentAnswers[category].risk) {
+                        missingItems.push(`Seleccionar riesgo en ${getCategoryName(category)}`);
+                    }
+                    if (currentAnswers[category].justification.length < 25) {
+                        missingItems.push(`Completar justificación en ${getCategoryName(category)}`);
+                    }
+                }
             });
             
+            const btn = document.getElementById('nextBtn') || document.getElementById('finishBtn');
+            const validation = document.getElementById('global-validation');
+            
+            if (allComplete) {
+                btn.style.display = 'block';
+                validation.style.display = 'none';
+            } else {
+                btn.style.display = 'none';
+                validation.innerHTML = `<strong>Pendiente:</strong><br>• ${missingItems.join('<br>• ')}`;
+                validation.style.display = 'block';
+            }
+        }
+        
+        function getCategoryName(category) {
+            const names = {
+                activity: 'Actividad Económica',
+                transactions: 'Transaccionalidad', 
+                instruments: 'Instrumento Monetario',
+                geographic: 'Entidad Geográfica',
+                pep: 'Relación con PEP'
+            };
+            return names[category];
+        }
+        
+        function nextCase() {
+            saveCurrentAnswers();
             currentCaseIndex++;
             loadCurrentCase();
         }
         
-        // Función para finalizar evaluación
         function finishEvaluation() {
-            if (!currentAnswer.risk || currentAnswer.justification.length < 50) {
-                alert('Por favor complete la evaluación y justificación antes de finalizar');
-                return;
-            }
-            
-            // Guardar última respuesta
-            userAnswers.push({
-                profileId: selectedProfiles[currentCaseIndex].id,
-                userRisk: currentAnswer.risk,
-                correctRisk: selectedProfiles[currentCaseIndex].correctRisk,
-                justification: currentAnswer.justification,
-                profile: selectedProfiles[currentCaseIndex]
-            });
-            
-            // Calcular resultados
+            saveCurrentAnswers();
             calculateResults();
         }
         
-        // Función para calcular resultados
+        function saveCurrentAnswers() {
+            userAnswers.push({
+                profileId: selectedProfiles[currentCaseIndex].id,
+                profile: selectedProfiles[currentCaseIndex],
+                answers: JSON.parse(JSON.stringify(currentAnswers))
+            });
+        }
+        
         function calculateResults() {
-            let correctAnswers = 0;
+            let totalCorrect = 0;
+            let totalQuestions = userAnswers.length * 5; // 5 categories per case
             
-            userAnswers.forEach(answer => {
-                if (answer.userRisk === answer.correctRisk) {
-                    correctAnswers++;
-                }
+            userAnswers.forEach(caseAnswer => {
+                const correct = caseAnswer.profile.correctAnswers;
+                Object.keys(correct).forEach(category => {
+                    if (caseAnswer.answers[category].risk === correct[category]) {
+                        totalCorrect++;
+                    }
+                });
             });
             
-            const finalScore = Math.round((correctAnswers / userAnswers.length) * 100);
+            const finalScore = Math.round((totalCorrect / totalQuestions) * 100);
             
-            // Mostrar resultados
             document.getElementById('evaluationScreen').style.display = 'none';
             document.getElementById('resultsScreen').style.display = 'block';
             
-            // Actualizar información del resultado
             document.getElementById('finalScore').textContent = finalScore + '%';
             document.getElementById('userInfo').textContent = `Evaluación realizada por: ${userData.name}`;
             
@@ -888,109 +1252,144 @@
                 classification.style.background = '#e74c3c';
             }
             
-            // Mostrar revisión de casos
+            showResultsSummary();
             showCasesReview();
         }
         
-        // Función para mostrar revisión de casos
+        function showResultsSummary() {
+            const summaryContainer = document.getElementById('resultsSummary');
+            const categories = ['activity', 'transactions', 'instruments', 'geographic', 'pep'];
+            let summaryHTML = '';
+            
+            categories.forEach(category => {
+                let correct = 0;
+                let total = userAnswers.length;
+                
+                userAnswers.forEach(caseAnswer => {
+                    if (caseAnswer.answers[category].risk === caseAnswer.profile.correctAnswers[category]) {
+                        correct++;
+                    }
+                });
+                
+                const percentage = Math.round((correct / total) * 100);
+                const isGood = percentage >= 70;
+                
+                summaryHTML += `
+                    <div class="category-result ${isGood ? 'correct' : 'incorrect'}">
+                        <h4>${getCategoryName(category)}</h4>
+                        <div style="font-size: 2em; margin: 10px 0;">${percentage}%</div>
+                        <p>${correct} de ${total} correctas</p>
+                    </div>
+                `;
+            });
+            
+            summaryContainer.innerHTML = summaryHTML;
+        }
+        
         function showCasesReview() {
             const reviewContainer = document.getElementById('casesReview');
             let reviewHTML = '';
             
-            userAnswers.forEach((answer, index) => {
-                const isCorrect = answer.userRisk === answer.correctRisk;
-                const statusClass = isCorrect ? 'correct' : 'incorrect';
-                const statusIcon = isCorrect ? '✅' : '❌';
-                
+            userAnswers.forEach((caseAnswer, caseIndex) => {
                 reviewHTML += `
-                    <div class="case-result ${statusClass}">
-                        <h4>${statusIcon} Caso ${index + 1}: ${answer.profile.name}</h4>
-                        <p><strong>Tu evaluación:</strong> ${getRiskLabel(answer.userRisk)}</p>
-                        <p><strong>Evaluación correcta:</strong> ${getRiskLabel(answer.correctRisk)}</p>
-                        <p><strong>Tu justificación:</strong> ${answer.justification}</p>
-                        ${!isCorrect ? `<p><strong>Explicación:</strong> ${answer.profile.explanation}</p>` : ''}
-                    </div>
+                    <div class="case-result">
+                        <h3>Caso ${caseIndex + 1}: ${caseAnswer.profile.name}</h3>
+                        <p><strong>Ocupación:</strong> ${caseAnswer.profile.occupation}</p>
                 `;
+                
+                Object.keys(caseAnswer.answers).forEach(category => {
+                    const userRisk = caseAnswer.answers[category].risk;
+                    const correctRisk = caseAnswer.profile.correctAnswers[category];
+                    const isCorrect = userRisk === correctRisk;
+                    
+                    reviewHTML += `
+                        <div style="margin: 10px 0; padding: 10px; border-left: 3px solid ${isCorrect ? '#27ae60' : '#e74c3c'}; background: ${isCorrect ? '#f1f8e9' : '#fdf2f2'};">
+                            <strong>${getCategoryName(category)}:</strong> 
+                            ${isCorrect ? '✅' : '❌'} 
+                            Tu respuesta: ${getRiskLabel(userRisk)} | 
+                            Correcta: ${getRiskLabel(correctRisk)}
+                            <br><em>Tu justificación:</em> ${caseAnswer.answers[category].justification}
+                        </div>
+                    `;
+                });
+                
+                reviewHTML += '</div>';
             });
             
             reviewContainer.innerHTML = reviewHTML;
         }
         
-        // Función para obtener etiqueta de riesgo
         function getRiskLabel(risk) {
-            const labels = {
-                'low': 'Riesgo Bajo 🟢',
-                'medium': 'Riesgo Medio 🟡',
-                'high': 'Riesgo Alto 🔴'
-            };
+            const labels = { 'low': 'Bajo', 'medium': 'Medio', 'high': 'Alto' };
             return labels[risk] || risk;
         }
         
-        // Función para imprimir reporte
-        function printReport() {
-            const printContent = document.getElementById('printContent');
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
             
-            let correctAnswers = userAnswers.filter(answer => answer.userRisk === answer.correctRisk).length;
-            let finalScore = Math.round((correctAnswers / userAnswers.length) * 100);
+            // Title
+            doc.setFontSize(20);
+            doc.text('REPORTE DE EVALUACIÓN KYC', 20, 20);
             
-            printContent.innerHTML = `
-                <div style="font-family: Arial, sans-serif; padding: 20px;">
-                    <div style="text-align: center; border-bottom: 2px solid #2c3e50; padding-bottom: 20px; margin-bottom: 30px;">
-                        <h1 style="color: #2c3e50;">🎯 REPORTE DE EVALUACIÓN KYC</h1>
-                        <h2 style="color: #7f8c8d;">Simulador de Riesgos - Muestra Gratuita</h2>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
-                        <div>
-                            <h3 style="color: #2c3e50; border-bottom: 1px solid #bdc3c7; padding-bottom: 10px;">DATOS DEL EVALUADO</h3>
-                            <p><strong>Nombre:</strong> ${userData.name}</p>
-                            <p><strong>Email:</strong> ${userData.email}</p>
-                            <p><strong>Teléfono:</strong> ${userData.phone}</p>
-                            <p><strong>Empresa:</strong> ${userData.company || 'No especificada'}</p>
-                            <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-MX')}</p>
-                        </div>
-                        
-                        <div>
-                            <h3 style="color: #2c3e50; border-bottom: 1px solid #bdc3c7; padding-bottom: 10px;">RESULTADOS</h3>
-                            <p><strong>Casos evaluados:</strong> ${userAnswers.length}</p>
-                            <p><strong>Respuestas correctas:</strong> ${correctAnswers}</p>
-                            <p><strong>Calificación final:</strong> ${finalScore}%</p>
-                            <p><strong>Clasificación:</strong> ${finalScore >= 90 ? 'EXCELENTE' : finalScore >= 70 ? 'APROBADO' : 'REQUIERE MEJORA'}</p>
-                        </div>
-                    </div>
-                    
-                    <h3 style="color: #2c3e50; border-bottom: 1px solid #bdc3c7; padding-bottom: 10px;">DETALLE DE EVALUACIONES</h3>
-                    
-                    ${userAnswers.map((answer, index) => {
-                        const isCorrect = answer.userRisk === answer.correctRisk;
-                        return `
-                            <div style="margin-bottom: 25px; padding: 15px; border: 1px solid #bdc3c7; border-radius: 5px; ${isCorrect ? 'background: #f1f8e9;' : 'background: #fdf2f2;'}">
-                                <h4 style="color: #2c3e50;">${isCorrect ? '✅' : '❌'} Caso ${index + 1}: ${answer.profile.name}</h4>
-                                <p><strong>Ocupación:</strong> ${answer.profile.occupation}</p>
-                                <p><strong>Tu evaluación:</strong> ${getRiskLabel(answer.userRisk)}</p>
-                                <p><strong>Evaluación correcta:</strong> ${getRiskLabel(answer.correctRisk)}</p>
-                                <p><strong>Tu justificación:</strong> ${answer.justification}</p>
-                                ${!isCorrect ? `<p><strong>Explicación del error:</strong> ${answer.profile.explanation}</p>` : ''}
-                            </div>
-                        `;
-                    }).join('')}
-                    
-                    <div style="text-align: center; margin-top: 40px; padding: 20px; border: 2px solid #27ae60; border-radius: 10px;">
-                        <h3 style="color: #27ae60;">¿Te gustó esta evaluación?</h3>
-                        <p style="margin: 15px 0;">Accede al curso completo con 50+ casos reales, certificación oficial y metodología avanzada de PLD/FT</p>
-                        <p style="font-weight: bold;">Curso Completo KYC/AML disponible en Hotmart</p>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 30px; font-size: 0.9em; color: #7f8c8d;">
-                        <p>Reporte generado el ${new Date().toLocaleString('es-MX')}</p>
-                        <p>Simulador KYC - Versión Gratuita | Curso completo en Hotmart</p>
-                    </div>
-                </div>
-            `;
+            doc.setFontSize(14);
+            doc.text('Simulador de Riesgos - Muestra Gratuita', 20, 35);
             
-            printContent.classList.remove('hidden');
-            window.print();
-            printContent.classList.add('hidden');
+            // User info
+            doc.setFontSize(12);
+            doc.text(`Nombre: ${userData.name}`, 20, 55);
+            doc.text(`Email: ${userData.email}`, 20, 65);
+            doc.text(`Teléfono: ${userData.phone}`, 20, 75);
+            doc.text(`Empresa: ${userData.company || 'No especificada'}`, 20, 85);
+            doc.text(`Fecha: ${new Date().toLocaleDateString('es-MX')}`, 20, 95);
+            
+            // Results summary
+            let totalCorrect = 0;
+            let totalQuestions = userAnswers.length * 5;
+            
+            userAnswers.forEach(caseAnswer => {
+                Object.keys(caseAnswer.answers).forEach(category => {
+                    if (caseAnswer.answers[category].risk === caseAnswer.profile.correctAnswers[category]) {
+                        totalCorrect++;
+                    }
+                });
+            });
+            
+            const finalScore = Math.round((totalCorrect / totalQuestions) * 100);
+            
+            doc.text(`Calificación Final: ${finalScore}%`, 20, 115);
+            doc.text(`Respuestas Correctas: ${totalCorrect} de ${totalQuestions}`, 20, 125);
+            
+            // Cases detail
+            let yPosition = 145;
+            
+            userAnswers.forEach((caseAnswer, caseIndex) => {
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+                
+                doc.setFontSize(14);
+                doc.text(`Caso ${caseIndex + 1}: ${caseAnswer.profile.name}`, 20, yPosition);
+                yPosition += 10;
+                
+                doc.setFontSize(10);
+                Object.keys(caseAnswer.answers).forEach(category => {
+                    const userRisk = caseAnswer.answers[category].risk;
+                    const correctRisk = caseAnswer.profile.correctAnswers[category];
+                    const isCorrect = userRisk === correctRisk;
+                    
+                    doc.text(`${getCategoryName(category)}: ${isCorrect ? 'CORRECTO' : 'INCORRECTO'}`, 25, yPosition);
+                    yPosition += 7;
+                    doc.text(`Tu respuesta: ${getRiskLabel(userRisk)} | Correcta: ${getRiskLabel(correctRisk)}`, 30, yPosition);
+                    yPosition += 10;
+                });
+                
+                yPosition += 5;
+            });
+            
+            // Save PDF
+            doc.save(`Reporte_KYC_${userData.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`);
         }
     </script>
 </body>
