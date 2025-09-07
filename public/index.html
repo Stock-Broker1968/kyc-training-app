@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -98,6 +99,17 @@
             border-color: #3498db;
         }
         
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        
         .start-btn {
             background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
@@ -169,6 +181,17 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+        
+        .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: #7f8c8d;
+            background: #ecf0f1;
         }
         
         .subject-info {
@@ -398,11 +421,60 @@
             box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3);
         }
         
+        .hotmart-section {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #e8f5e8;
+            border-radius: 10px;
+        }
+        
+        .hotmart-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #27ae60;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        
+        .hotmart-btn:hover {
+            transform: translateY(-2px);
+        }
+        
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .registration-screen, .evaluation-screen, .results-screen {
+                padding: 20px;
+            }
+            
+            .registration-form {
+                padding: 20px;
+            }
+            
             .subject-card {
                 grid-template-columns: 1fr;
                 text-align: center;
                 gap: 20px;
+            }
+            
+            .photo-container {
+                width: 150px;
+                height: 200px;
+                margin: 0 auto;
             }
             
             .subject-info {
@@ -414,6 +486,10 @@
             }
             
             .geographic-selects {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-summary {
                 grid-template-columns: 1fr;
             }
         }
@@ -460,42 +536,15 @@
                     <input type="text" id="userCompany" placeholder="Nombre de su empresa">
                 </div>
                 
-               <div class="form-group">
-                    <label style="display: flex; align-items: center; font-size: 0.9em;">
-                    <input type="checkbox" id="marketingConsent" style="margin-right: 10px; width: auto;">
-                    Autorizo recibir información sobre cursos y promociones por email y WhatsApp
+                <div class="form-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="marketingConsent">
+                        Autorizo recibir información sobre cursos y promociones por email y WhatsApp
                     </label>
                 </div>
                 
                 <button class="start-btn" onclick="startSimulation()">
                     🚀 INICIAR SIMULADOR KYC
-                    function startSimulation() {
-                    const name = document.getElementById('userName').value.trim();
-                    const email = document.getElementById('userEmail').value.trim();
-                    const phone = document.getElementById('userPhone').value.trim();
-                    const company = document.getElementById('userCompany').value.trim();
-                    const marketingConsent = document.getElementById('marketingConsent').checked;
-    
-    if (!name || !email || !phone) {
-        alert('Por favor complete todos los campos obligatorios');
-        return;
-    }
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert('Por favor ingrese un correo electrónico válido');
-        return;
-    }
-    
-    userData = { name, email, phone, company, marketingConsent, timestamp: new Date().toISOString() };
-    
-    selectedProfiles = selectRandomProfiles(3);
-    
-    document.getElementById('registrationScreen').style.display = 'none';
-    document.getElementById('evaluationScreen').style.display = 'block';
-    
-    loadCurrentCase();
-}
                 </button>
                 
                 <p style="margin-top: 20px; font-size: 0.9em; color: #7f8c8d;">
@@ -542,13 +591,13 @@
                 📄 GENERAR REPORTE PDF
             </button>
             
-            <div style="text-align: center; margin-top: 30px; padding: 20px; background: #e8f5e8; border-radius: 10px;">
+            <div class="hotmart-section">
                 <h3 style="color: #27ae60; margin-bottom: 15px;">¿Te gustó esta muestra?</h3>
                 <p style="color: #2c3e50; margin-bottom: 20px;">
                     Accede al curso completo con 50+ casos, certificación oficial y metodología avanzada
                 </p>
-                <a href="https://hotmart.com/es/club/global-skills-cert/products/6005861" style="display: inline-block; padding: 15px 30px; background: #27ae60; color: white; text-decoration: none; border-radius: 25px; font-weight: bold;">
-                    VER CURSO COMPLETO EN HOTMART
+                <a href="https://hotmart.com/es/club/global-skills-cert/products/6005861" target="_blank" class="hotmart-btn">
+                    🎓 VER CURSO COMPLETO EN HOTMART
                 </a>
             </div>
         </div>
@@ -572,11 +621,11 @@
                 mexicanState: "CDMX",
                 country: "Suiza",
                 correctAnswers: {
-                    activity: "medium", // Importador
-                    transactions: "high", // $500K USD
-                    instruments: "medium", // Transferencias internacionales
-                    geographic: "high", // Suiza (paraíso fiscal)
-                    pep: "high" // PEP familiar directo
+                    activity: "medium",
+                    transactions: "high",
+                    instruments: "medium",
+                    geographic: "high",
+                    pep: "high"
                 }
             },
             {
@@ -594,11 +643,11 @@
                 mexicanState: "Estado de México",
                 country: "Estados Unidos",
                 correctAnswers: {
-                    activity: "low", // Ama de casa
-                    transactions: "low", // $10K mensuales
-                    instruments: "low", // Transferencias normales
-                    geographic: "low", // Estados Unidos (bajo riesgo)
-                    pep: "high" // Conexión con corrupción
+                    activity: "low",
+                    transactions: "low",
+                    instruments: "low",
+                    geographic: "low",
+                    pep: "high"
                 }
             },
             {
@@ -616,11 +665,11 @@
                 mexicanState: "Jalisco",
                 country: "México",
                 correctAnswers: {
-                    activity: "medium", // Influencer (nueva economía)
-                    transactions: "medium", // $50K mensuales
-                    instruments: "high", // Alto uso de efectivo
-                    geographic: "low", // Jalisco (bajo riesgo)
-                    pep: "low" // Sin conexiones PEP
+                    activity: "medium",
+                    transactions: "medium",
+                    instruments: "high",
+                    geographic: "low",
+                    pep: "low"
                 }
             },
             {
@@ -638,11 +687,11 @@
                 mexicanState: "Oaxaca",
                 country: "México",
                 correctAnswers: {
-                    activity: "low", // Agricultor (actividad tradicional)
-                    transactions: "low", // Volumen bajo
-                    instruments: "medium", // Alto efectivo por necesidad
-                    geographic: "medium", // Oaxaca (riesgo medio por pobreza)
-                    pep: "low" // Sin conexiones PEP
+                    activity: "low",
+                    transactions: "low",
+                    instruments: "medium",
+                    geographic: "medium",
+                    pep: "low"
                 }
             },
             {
@@ -660,11 +709,11 @@
                 mexicanState: "CDMX",
                 country: "México",
                 correctAnswers: {
-                    activity: "low", // Profesional regulado
-                    transactions: "medium", // $120K mensuales
-                    instruments: "low", // Transferencias corporativas
-                    geographic: "low", // CDMX (bajo riesgo)
-                    pep: "low" // Sin conexiones PEP
+                    activity: "low",
+                    transactions: "medium",
+                    instruments: "low",
+                    geographic: "low",
+                    pep: "low"
                 }
             },
             {
@@ -682,11 +731,11 @@
                 mexicanState: "CDMX",
                 country: "México",
                 correctAnswers: {
-                    activity: "medium", // Comercio informal
-                    transactions: "medium", // Diarios pero bajo monto
-                    instruments: "high", // Alto efectivo diario
-                    geographic: "low", // CDMX (bajo riesgo)
-                    pep: "low" // Sin conexiones PEP
+                    activity: "medium",
+                    transactions: "medium",
+                    instruments: "high",
+                    geographic: "low",
+                    pep: "low"
                 }
             },
             {
@@ -704,11 +753,11 @@
                 mexicanState: "Michoacán",
                 country: "Islas Caimán",
                 correctAnswers: {
-                    activity: "high", // Exfuncionario público
-                    transactions: "high", // Alto volumen
-                    instruments: "high", // Paraísos fiscales
-                    geographic: "high", // Michoacán + Islas Caimán
-                    pep: "high" // Exfuncionario PEP
+                    activity: "high",
+                    transactions: "high",
+                    instruments: "high",
+                    geographic: "high",
+                    pep: "high"
                 }
             },
             {
@@ -726,11 +775,11 @@
                 mexicanState: "Nuevo León",
                 country: "México",
                 correctAnswers: {
-                    activity: "low", // Profesional de salud
-                    transactions: "medium", // $100K mensuales
-                    instruments: "medium", // Efectivo en medicina
-                    geographic: "low", // Nuevo León (bajo riesgo)
-                    pep: "low" // Sin conexiones PEP
+                    activity: "low",
+                    transactions: "medium",
+                    instruments: "medium",
+                    geographic: "low",
+                    pep: "low"
                 }
             },
             {
@@ -748,11 +797,11 @@
                 mexicanState: "CDMX",
                 country: "China",
                 correctAnswers: {
-                    activity: "low", // Estudiante
-                    transactions: "low", // $10K mensuales
-                    instruments: "low", // Transferencias gubernamentales
-                    geographic: "medium", // China (riesgo medio)
-                    pep: "low" // Sin conexiones PEP
+                    activity: "low",
+                    transactions: "low",
+                    instruments: "low",
+                    geographic: "medium",
+                    pep: "low"
                 }
             },
             {
@@ -770,11 +819,11 @@
                 mexicanState: "Querétaro",
                 country: "México",
                 correctAnswers: {
-                    activity: "medium", // Fintech (regulado)
-                    transactions: "low", // Volumen bajo
-                    instruments: "high", // Criptomonedas
-                    geographic: "low", // Querétaro (bajo riesgo)
-                    pep: "low" // Sin conexiones PEP
+                    activity: "medium",
+                    transactions: "low",
+                    instruments: "high",
+                    geographic: "low",
+                    pep: "low"
                 }
             },
             {
@@ -792,11 +841,11 @@
                 mexicanState: "Baja California",
                 country: "México",
                 correctAnswers: {
-                    activity: "low", // Pensionado
-                    transactions: "low", // $10K mensuales
-                    instruments: "low", // Pensión gubernamental
-                    geographic: "medium", // Baja California (frontera)
-                    pep: "low" // Sin conexiones PEP
+                    activity: "low",
+                    transactions: "low",
+                    instruments: "low",
+                    geographic: "medium",
+                    pep: "low"
                 }
             },
             {
@@ -814,11 +863,11 @@
                 mexicanState: "Nuevo León",
                 country: "México",
                 correctAnswers: {
-                    activity: "low", // Entretenimiento regulado
-                    transactions: "medium", // $50K mensuales
-                    instruments: "low", // Contratos formales
-                    geographic: "low", // Nuevo León (bajo riesgo)
-                    pep: "low" // Sin conexiones PEP
+                    activity: "low",
+                    transactions: "medium",
+                    instruments: "low",
+                    geographic: "low",
+                    pep: "low"
                 }
             }
         ];
@@ -854,7 +903,7 @@
             "Brasil": "medium",
             "Colombia": "medium",
             "Venezuela": "high",
-            "Suiza": "high", // Paraíso fiscal
+            "Suiza": "high",
             "Islas Caimán": "high",
             "Panamá": "high",
             "Afganistán": "high",
@@ -874,68 +923,18 @@
             pep: { risk: '', justification: '' }
         };
         
+        // Función para iniciar simulación
         function startSimulation() {
-        const name = document.getElementById('userName').value.trim();
-        const email = document.getElementById('userEmail').value.trim();
-        const phone = document.getElementById('userPhone').value.trim();
-        const company = document.getElementById('userCompany').value.trim();
-        const marketingConsent = document.getElementById('marketingConsent').checked;
-    
-        if (!name || !email || !phone) {
-        alert('Por favor complete todos los campos obligatorios');
-        return;
-    }
-    function saveUserData(data) {
-    try {
-        // Guardar en localStorage como respaldo
-        const existingData = JSON.parse(localStorage.getItem('kycUsers') || '[]');
-        existingData.push(data);
-        localStorage.setItem('kycUsers', JSON.stringify(existingData));
-        
-        // Enviar a webhook/CRM (ejemplo con Zapier/Make)
-        fetch('https://hooks.zapier.com/hooks/catch/YOUR_WEBHOOK_URL/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                nombre: data.name,
-                email: data.email,
-                telefono: data.phone,
-                empresa: data.company,
-                autorizacion_marketing: data.marketingConsent,
-                fecha_registro: data.timestamp,
-                fuente: 'Simulador KYC'
-            })
-        }).catch(error => {
-            console.log('Error enviando datos:', error);
-            // Los datos se mantienen en localStorage como respaldo
-        });
-        
-        console.log('Datos guardados:', data);
-    } catch (error) {
-        console.error('Error guardando datos:', error);
-    }
-}
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert('Por favor ingrese un correo electrónico válido');
-        return;
-    }
-    
-    // Guardar datos del usuario
-    userData = { name, email, phone, company, marketingConsent, timestamp: new Date().toISOString() };
-    
-    // Enviar datos al CRM/Base de datos
-    saveUserData(userData);
-    
-    selectedProfiles = selectRandomProfiles(3);
-    
-    document.getElementById('registrationScreen').style.display = 'none';
-    document.getElementById('evaluationScreen').style.display = 'block';
-    
-    loadCurrentCase();
-}
+            const name = document.getElementById('userName').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            const phone = document.getElementById('userPhone').value.trim();
+            const company = document.getElementById('userCompany').value.trim();
+            const marketingConsent = document.getElementById('marketingConsent').checked;
+            
+            if (!name || !email || !phone) {
+                alert('Por favor complete todos los campos obligatorios');
+                return;
+            }
             
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
@@ -943,20 +942,48 @@
                 return;
             }
             
-            userData = { name, email, phone, company };
+            // Guardar datos del usuario
+            userData = { name, email, phone, company, marketingConsent, timestamp: new Date().toISOString() };
+            
+            // Guardar datos en localStorage
+            saveUserData(userData);
+            
+            // Seleccionar 3 perfiles aleatorios
             selectedProfiles = selectRandomProfiles(3);
             
+            // Mostrar pantalla de evaluación
             document.getElementById('registrationScreen').style.display = 'none';
             document.getElementById('evaluationScreen').style.display = 'block';
             
+            // Cargar primer caso
             loadCurrentCase();
         }
         
+        // Función para guardar datos del usuario
+        function saveUserData(data) {
+            try {
+                // Guardar en localStorage como respaldo
+                const existingData = JSON.parse(localStorage.getItem('kycUsers') || '[]');
+                existingData.push(data);
+                localStorage.setItem('kycUsers', JSON.stringify(existingData));
+                
+                console.log('Datos guardados:', data);
+                
+                // Aquí puedes agregar envío a webhook/CRM en el futuro
+                // fetch('TU_WEBHOOK_URL', { method: 'POST', body: JSON.stringify(data) });
+                
+            } catch (error) {
+                console.error('Error guardando datos:', error);
+            }
+        }
+        
+        // Función para seleccionar perfiles aleatorios
         function selectRandomProfiles(count) {
             const shuffled = [...profiles].sort(() => 0.5 - Math.random());
             return shuffled.slice(0, count);
         }
         
+        // Función para cargar caso actual
         function loadCurrentCase() {
             const profile = selectedProfiles[currentCaseIndex];
             const progress = ((currentCaseIndex + 1) / selectedProfiles.length) * 100;
@@ -968,7 +995,7 @@
                 <div class="subject-card">
                     <div class="photo-container">
                         <img src="${profile.photo}" alt="Foto de ${profile.name}" class="subject-photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div style="display: none; align-items: center; justify-content: center; height: 100%; font-size: 3em; color: #7f8c8d;">👤</div>
+                        <div class="photo-placeholder" style="display: none;">👤</div>
                     </div>
                     
                     <div class="subject-info">
@@ -1135,6 +1162,8 @@
                             <div class="validation-message" id="geographic-validation"></div>
                         </div>
                     </div>
+                    
+                    <!-- Relación con PEP -->
                     
                     <!-- Relación con PEP -->
                     <div class="risk-category">
@@ -1479,6 +1508,7 @@
     </script>
 </body>
 </html>
+
 
 
 
