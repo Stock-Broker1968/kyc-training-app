@@ -455,6 +455,11 @@
                     <input type="tel" id="userPhone" required placeholder="55 1234 5678">
                 </div>
                 
+                <div class="form-group">
+                    <label for="userCompany">Empresa/Institución (Opcional)</label>
+                    <input type="text" id="userCompany" placeholder="Nombre de su empresa">
+                </div>
+                
                <div class="form-group">
                     <label style="display: flex; align-items: center; font-size: 0.9em;">
                     <input type="checkbox" id="marketingConsent" style="margin-right: 10px; width: auto;">
@@ -464,6 +469,33 @@
                 
                 <button class="start-btn" onclick="startSimulation()">
                     🚀 INICIAR SIMULADOR KYC
+                    function startSimulation() {
+                    const name = document.getElementById('userName').value.trim();
+                    const email = document.getElementById('userEmail').value.trim();
+                    const phone = document.getElementById('userPhone').value.trim();
+                    const company = document.getElementById('userCompany').value.trim();
+                    const marketingConsent = document.getElementById('marketingConsent').checked;
+    
+    if (!name || !email || !phone) {
+        alert('Por favor complete todos los campos obligatorios');
+        return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Por favor ingrese un correo electrónico válido');
+        return;
+    }
+    
+    userData = { name, email, phone, company, marketingConsent, timestamp: new Date().toISOString() };
+    
+    selectedProfiles = selectRandomProfiles(3);
+    
+    document.getElementById('registrationScreen').style.display = 'none';
+    document.getElementById('evaluationScreen').style.display = 'block';
+    
+    loadCurrentCase();
+}
                 </button>
                 
                 <p style="margin-top: 20px; font-size: 0.9em; color: #7f8c8d;">
@@ -1447,6 +1479,7 @@
     </script>
 </body>
 </html>
+
 
 
 
