@@ -842,17 +842,68 @@
             pep: { risk: '', justification: '' }
         };
         
-        // Función para iniciar simulación
         function startSimulation() {
-            const name = document.getElementById('userName').value.trim();
-            const email = document.getElementById('userEmail').value.trim();
-            const phone = document.getElementById('userPhone').value.trim();
-            const company = document.getElementById('userCompany').value.trim();
-            
-            if (!name || !email || !phone) {
-                alert('Por favor complete todos los campos obligatorios');
-                return;
-            }
+        const name = document.getElementById('userName').value.trim();
+        const email = document.getElementById('userEmail').value.trim();
+        const phone = document.getElementById('userPhone').value.trim();
+        const company = document.getElementById('userCompany').value.trim();
+        const marketingConsent = document.getElementById('marketingConsent').checked;
+    
+        if (!name || !email || !phone) {
+        alert('Por favor complete todos los campos obligatorios');
+        return;
+    }
+    function saveUserData(data) {
+    try {
+        // Guardar en localStorage como respaldo
+        const existingData = JSON.parse(localStorage.getItem('kycUsers') || '[]');
+        existingData.push(data);
+        localStorage.setItem('kycUsers', JSON.stringify(existingData));
+        
+        // Enviar a webhook/CRM (ejemplo con Zapier/Make)
+        fetch('https://hooks.zapier.com/hooks/catch/YOUR_WEBHOOK_URL/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nombre: data.name,
+                email: data.email,
+                telefono: data.phone,
+                empresa: data.company,
+                autorizacion_marketing: data.marketingConsent,
+                fecha_registro: data.timestamp,
+                fuente: 'Simulador KYC'
+            })
+        }).catch(error => {
+            console.log('Error enviando datos:', error);
+            // Los datos se mantienen en localStorage como respaldo
+        });
+        
+        console.log('Datos guardados:', data);
+    } catch (error) {
+        console.error('Error guardando datos:', error);
+    }
+}
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Por favor ingrese un correo electrónico válido');
+        return;
+    }
+    
+    // Guardar datos del usuario
+    userData = { name, email, phone, company, marketingConsent, timestamp: new Date().toISOString() };
+    
+    // Enviar datos al CRM/Base de datos
+    saveUserData(userData);
+    
+    selectedProfiles = selectRandomProfiles(3);
+    
+    document.getElementById('registrationScreen').style.display = 'none';
+    document.getElementById('evaluationScreen').style.display = 'block';
+    
+    loadCurrentCase();
+}
             
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
@@ -1396,5 +1447,6 @@
     </script>
 </body>
 </html>
+
 
 
